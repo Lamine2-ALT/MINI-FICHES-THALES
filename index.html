@@ -2,14 +2,14 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Mini-fiches de découverte : le théorème de Thalès et sa réciproque — 3ᵉ, activités géométriques.">
-<title>Mini-Fiches · Le Théorème de Thalès · 3ᵉ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a1120">
+<title>Mini-Fiches · Théorème de Thalès · 3ᵉ · Format Story 9:16</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════ VARIABLES & BASE ═══════════════════ */
+/* ═══════════════ VARIABLES ═══════════════ */
 :root{
   --paper:#f5f2e9; --sheet:#fffdf8; --ink:#1c2b4e; --ink-soft:rgba(28,43,78,.62);
   --blue:#2456a6; --teal:#0e7a5e; --red:#d3402b; --gold:#e39b1c; --cover:#14213d;
@@ -18,195 +18,181 @@
   --geo:Georgia,'Times New Roman',serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+var{font-family:var(--geo);font-style:italic;font-weight:500;letter-spacing:.02em;padding:0 .06em}
+button{font-family:var(--body)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+/* ═══════════════ MOTEUR « STORY » : SWIPE FLUIDE 9:16 ═══════════════ */
+html{
+  height:100%;
+  scroll-snap-type:y mandatory;      /* un swipe = une page pile */
+  scroll-behavior:smooth;
+  overscroll-behavior-y:contain;     /* pas de rebond/refresh parasite */
+  scrollbar-width:none;
+}
+html::-webkit-scrollbar{display:none}
 body{
-  font-family:var(--body);color:var(--ink);line-height:1.68;
+  min-height:100%;font-family:var(--body);color:var(--ink);line-height:1.5;
+  background:radial-gradient(130% 100% at 50% 0%,#22314f 0%,#101a30 55%,#0a1120 100%);
+}
+.page{
+  height:100vh;height:100dvh;
+  scroll-snap-align:center;
+  scroll-snap-stop:always;           /* interdit de sauter 2 pages d'un coup */
+  display:grid;place-items:center;
+}
+/* Carte EXACTEMENT 9:16, conteneur de référence pour toutes les tailles */
+.card{
+  position:relative;overflow:hidden;
+  width:min(100vw,56.25vh);
+  width:min(100vw,56.25dvh);
+  aspect-ratio:9/16;
+  container-type:size;
+  border-radius:18px;
+  box-shadow:0 30px 70px -28px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.07);
+}
+.accent{position:absolute;top:0;left:0;right:0;height:1.5cqw;z-index:3}
+.a1{background:var(--blue)}.a2{background:var(--gold)}.a3{background:var(--red)}.a4{background:var(--teal)}
+
+/* Intérieur : tout est en unités du conteneur → rendu identique sur tous les écrans */
+.ci{
+  position:relative;height:100%;
+  display:flex;flex-direction:column;gap:2.4cqw;
+  padding:5.4cqw 5.2cqw 3.6cqw;
+  font-size:15px;font-size:3.9cqw;line-height:1.5;
+}
+.paper .ci{
   background:
     linear-gradient(rgba(36,86,166,.055) 1px,transparent 1px),
     linear-gradient(90deg,rgba(36,86,166,.055) 1px,transparent 1px),
-    linear-gradient(rgba(36,86,166,.028) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(36,86,166,.028) 1px,transparent 1px),
-    var(--paper);
-  background-size:120px 120px,120px 120px,24px 24px,24px 24px;
+    var(--sheet);
+  background-size:6cqw 6cqw,6cqw 6cqw,auto;
 }
-::selection{background:var(--gold);color:var(--ink)}
-var{font-family:var(--geo);font-style:italic;font-weight:500;letter-spacing:.02em;padding:0 .06em}
-a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
+.dark .ci{
+  color:#fff;
+  background:
+    linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px),
+    radial-gradient(120% 100% at 50% 0%,#1b2c52 0%,var(--cover) 55%,#0e1730 100%);
+  background-size:8cqw 8cqw,8cqw 8cqw,auto;
+}
 
-/* ═══════════════════ FRACTIONS (barre alignée sur « = ») ═══════════════════ */
-.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 .24em;white-space:nowrap;font-size:.95em}
-.fr .fn{padding:0 .34em .16em}
-.fr .fd{padding:.2em .34em 0;border-top:2px solid currentColor}
-
-/* ═══════════════════ BARRE DE PROGRESSION & SCORE ═══════════════════ */
-#bar{position:fixed;top:0;left:0;height:4px;width:0;z-index:80;background:linear-gradient(90deg,var(--gold),var(--red))}
-#scoreChip{position:fixed;top:12px;right:12px;z-index:80;display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid rgba(28,43,78,.25);border-radius:999px;padding:7px 14px;font-weight:700;font-size:.8rem;box-shadow:0 8px 18px -10px rgba(28,43,78,.4)}
-#scoreChip .s{color:var(--gold)}
-#scoreChip.pop{animation:pop .35s ease}
-@keyframes pop{40%{transform:scale(1.13)}}
-
-/* ═══════════════════ RAIL LATÉRAL ═══════════════════ */
-.rail{position:fixed;left:18px;top:50%;transform:translateY(-50%);display:none;flex-direction:column;gap:13px;z-index:70}
-@media(min-width:1200px){.rail{display:flex}}
-.rail a{position:relative;width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(28,43,78,.28);background:#fff;display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:.72rem;color:var(--ink-soft);text-decoration:none;transition:.25s}
-.rail a:hover{transform:scale(1.14);border-color:var(--ink)}
-.rail a.on{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:0 6px 14px -6px rgba(28,43,78,.55)}
-.rail a::after{content:attr(data-label);position:absolute;left:46px;top:50%;translate:0 -50%;white-space:nowrap;background:var(--ink);color:#fff;font-family:var(--body);font-weight:600;font-size:.68rem;padding:4px 10px;border-radius:6px;opacity:0;pointer-events:none;transition:.2s}
-.rail a:hover::after{opacity:1}
-
-.wrap{max-width:980px;margin:0 auto;padding:26px 20px 90px}
-@media(min-width:1200px){.wrap{margin-left:96px;margin-right:auto}}
-
-/* ═══════════════════ APPARITION AU SCROLL ═══════════════════ */
-.js .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
-.js .reveal.in{opacity:1;transform:none}
-
-/* ═══════════════════ COUVERTURE ═══════════════════ */
-.cover{position:relative;overflow:hidden;background:var(--cover);color:#fff;border-radius:22px;padding:44px 32px 38px;box-shadow:0 30px 60px -30px rgba(20,33,61,.7)}
-.cover::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:32px 32px}
-.cov-kicker{font-weight:700;font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
-.cov-grid{display:grid;gap:30px;align-items:center;margin-top:22px;position:relative}
-@media(min-width:820px){.cov-grid{grid-template-columns:1.12fr .88fr}}
-.cover h1{font-family:var(--disp);font-weight:800;font-size:clamp(2.4rem,5.6vw,4.2rem);line-height:1.02;letter-spacing:-.01em}
-.cover h1 span{color:var(--gold)}
-.cov-sub{margin-top:14px;max-width:46ch;color:rgba(255,255,255,.85);font-size:1.02rem}
-.cov-comp{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.cov-comp span{border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 13px;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85)}
-.cov-nav{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-.cov-nav a{display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:#fff;border:1px solid rgba(255,255,255,.32);border-radius:10px;padding:9px 13px;font-size:.85rem;transition:.25s}
-.cov-nav a b{font-family:var(--disp);font-weight:800;color:var(--gold)}
-.cov-nav a:hover{background:#fff;color:var(--cover);transform:translateY(-3px)}
-.cov-nav a:hover b{color:var(--red)}
-.cov-flow{margin-top:22px;font-weight:600;font-size:.86rem;color:rgba(255,255,255,.9)}
-.cov-flow b{color:var(--gold)}
-.cov-meta{margin-top:10px;font-size:.74rem;letter-spacing:.08em;color:rgba(255,255,255,.55)}
-.cov-fig{position:relative}
-.cov-fig svg{width:100%;max-width:400px;margin:auto;display:block;filter:drop-shadow(0 14px 24px rgba(0,0,0,.35))}
-.fx{position:absolute;font-family:var(--disp);font-weight:800;color:rgba(255,255,255,.12);pointer-events:none;user-select:none;animation:float 7s ease-in-out infinite alternate}
-@keyframes float{from{transform:translateY(-9px) rotate(var(--r,0deg))}to{transform:translateY(10px) rotate(var(--r,0deg))}}
-@media(max-width:860px){.fx{display:none}}
-.cov-down{display:flex;justify-content:center;margin-top:26px;color:rgba(255,255,255,.65);animation:bob 1.8s ease-in-out infinite}
-@keyframes bob{50%{transform:translateY(6px)}}
-.draw{stroke-dasharray:640;stroke-dashoffset:640;animation:draw 1.7s .3s ease forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
-.flow{stroke-dasharray:7 9;animation:flow 1.4s linear infinite}
-@keyframes flow{to{stroke-dashoffset:-16}}
-.pt{opacity:0;animation:ptin .4s ease forwards}
-@keyframes ptin{to{opacity:1}}
-
-/* ═══════════════════ FICHES & FEUILLES ═══════════════════ */
-.fiche{margin-top:60px;scroll-margin-top:20px}
-.fiche-head{display:flex;gap:16px;align-items:flex-end;margin-bottom:20px}
-.fiche-num{font-family:var(--disp);font-weight:800;font-size:.8rem;letter-spacing:.14em;background:var(--ink);color:#fff;padding:9px 13px;border-radius:8px;box-shadow:3px 3px 0 var(--gold)}
-.fiche-head h2{font-family:var(--disp);font-weight:800;font-size:clamp(1.45rem,3.4vw,2.15rem);line-height:1.08}
-.sheets{display:grid;gap:18px}
-@media(min-width:900px){.duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}}
-.sheet{position:relative;background:var(--sheet);border:1.5px solid rgba(28,43,78,.16);border-radius:14px;padding:22px 26px 16px;box-shadow:0 14px 30px -22px rgba(28,43,78,.45);display:flex;flex-direction:column}
-.sheet::after{content:"";position:absolute;top:0;right:0;border-style:solid;border-width:0 16px 16px 0;border-color:transparent var(--paper) rgba(28,43,78,.14) transparent;border-radius:0 12px 0 0}
-.sheet-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;row-gap:8px}
-.sheet-head h3{font-family:var(--disp);font-weight:700;font-size:1.08rem}
-.spacer{flex:1}
-.qmeta{font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
-.sheet-foot{margin-top:auto;padding-top:12px;border-top:1px dashed rgba(28,43,78,.28);display:flex;justify-content:space-between;gap:10px;font-size:.63rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(28,43,78,.5)}
-.beat-b{font-family:var(--disp);font-weight:800;font-size:.64rem;letter-spacing:.2em;color:#fff;padding:5px 11px;border-radius:5px}
+/* En-tête / pied de chaque carte */
+.c-head{display:flex;flex-direction:column;gap:1.6cqw}
+.c-top{display:flex;align-items:center;gap:2cqw;flex-wrap:wrap}
+.fnum{font-family:var(--disp);font-weight:800;font-size:.6em;letter-spacing:.18em;background:var(--ink);color:#fff;padding:.55em .9em;border-radius:.6em;box-shadow:.7cqw .7cqw 0 var(--gold)}
+.beat{font-family:var(--disp);font-weight:800;font-size:.6em;letter-spacing:.2em;color:#fff;padding:.55em 1em;border-radius:.6em}
 .b1{background:var(--blue)}.b2{background:var(--gold);color:var(--ink)}.b3{background:var(--red)}.b4{background:var(--teal)}
+.c-head h2{font-family:var(--disp);font-weight:800;font-size:1.22em;line-height:1.12}
+.c-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:2.6cqw;justify-content:center}
+.c-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:2cqw;border-top:1px dashed rgba(28,43,78,.3);padding-top:2.2cqw;font-size:.54em;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(28,43,78,.55)}
+.dark .c-foot{border-top-color:rgba(255,255,255,.25);color:rgba(255,255,255,.6)}
+.fs{color:var(--ink)}.fs b{color:var(--gold)}
+.dark .fs{color:#fff}
 
-/* ═══════════════════ BOÎTES DE CONTENU ═══════════════════ */
-.thm{position:relative;margin-top:18px;border:2px solid var(--ink);background:#fff;border-radius:10px;padding:22px 18px 16px;box-shadow:5px 5px 0 rgba(36,86,166,.22)}
-.thm-tag{position:absolute;top:-13px;left:14px;font-family:var(--disp);font-weight:800;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:#fff;background:var(--ink);padding:4px 11px;border-radius:5px}
+/* ═══════════════ FRACTIONS (barre alignée sur « = ») ═══════════════ */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 .22em;white-space:nowrap;font-size:.95em}
+.fr .fn{padding:0 .34em .14em}
+.fr .fd{padding:.18em .34em 0;border-top:.07em solid currentColor}
+
+/* ═══════════════ BOÎTES DE CONTENU ═══════════════ */
+.thm{position:relative;margin-top:3cqw;border:.55cqw solid var(--ink);background:#fff;border-radius:2.6cqw;padding:4.8cqw 3.6cqw 3.2cqw;box-shadow:1.2cqw 1.2cqw 0 rgba(36,86,166,.18);font-size:.92em}
+.thm-tag{position:absolute;top:-1.2em;left:3cqw;font-family:var(--disp);font-weight:800;font-size:.62em;letter-spacing:.22em;text-transform:uppercase;color:#fff;background:var(--ink);padding:.5em 1em;border-radius:.6em}
 .thm-tag.g{background:var(--gold);color:var(--ink)}
 .thm-tag.t{background:var(--teal)}
 .thm-tag.r{background:var(--red)}
-.formula{margin-top:10px;text-align:center;font-size:1.4rem;color:var(--blue);font-weight:600;line-height:2.05}
-.ex{margin-top:16px;background:rgba(227,155,28,.1);border-left:4px solid var(--gold);border-radius:0 9px 9px 0;padding:10px 14px;font-size:.92rem;line-height:1.75}
-.ex b{font-family:var(--disp);font-size:.68rem;letter-spacing:.2em;color:#8a5c05}
-.note{margin-top:16px;background:rgba(36,86,166,.08);border-left:4px solid var(--blue);border-radius:0 9px 9px 0;padding:10px 14px;font-size:.9rem;line-height:1.75}
+.formula{margin-top:2cqw;text-align:center;font-size:1.55em;color:var(--blue);font-weight:600;line-height:2.05}
+.ex{background:rgba(227,155,28,.12);border-left:1cqw solid var(--gold);border-radius:0 2cqw 2cqw 0;padding:2cqw 2.6cqw;font-size:.8em;line-height:1.65}
+.ex b{font-family:var(--disp);font-size:.85em;letter-spacing:.18em;color:#8a5c05}
+.note{background:rgba(36,86,166,.08);border-left:1cqw solid var(--blue);border-radius:0 2cqw 2cqw 0;padding:2cqw 2.6cqw;font-size:.8em;line-height:1.65}
+.note.t{background:rgba(14,122,94,.08);border-left-color:var(--teal)}
 
-/* conditions, étapes, table de correspondance */
-.conds{display:grid;gap:10px;margin-top:16px}
-@media(min-width:640px){.conds{grid-template-columns:1fr 1fr}}
-.cond{display:flex;gap:11px;align-items:flex-start;background:#fff;border:1.5px solid rgba(28,43,78,.18);border-radius:10px;padding:11px 13px;font-size:.92rem;line-height:1.75}
-.cn{flex:0 0 26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--disp);font-weight:800;font-size:.8rem;display:grid;place-items:center}
-.steps{list-style:none;counter-reset:st;display:grid;gap:11px;margin-top:16px}
-.steps li{counter-increment:st;display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start;font-size:.94rem}
-.steps li::before{content:counter(st);width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:.85rem;box-shadow:2px 2px 0 rgba(28,43,78,.2)}
-.corr{width:100%;border-collapse:collapse;margin-top:14px;font-size:.92rem;background:#fff;border-radius:10px;overflow:hidden;border:1.5px solid rgba(28,43,78,.16)}
-.corr th{background:var(--ink);color:#fff;font-family:var(--disp);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;padding:8px}
-.corr td{padding:8px;text-align:center;border-top:1px solid rgba(28,43,78,.12)}
+/* conditions · étapes · tableau */
+.conds{display:grid;gap:2cqw}
+.cond{display:flex;gap:2.4cqw;align-items:flex-start;background:#fff;border:.4cqw solid rgba(28,43,78,.2);border-radius:2.4cqw;padding:2.2cqw 2.6cqw;font-size:.85em;line-height:1.55}
+.cn{flex:0 0 auto;width:6.4cqw;height:6.4cqw;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--disp);font-weight:800;font-size:.8em;display:grid;place-items:center}
+.steps{list-style:none;counter-reset:st;display:grid;gap:2.2cqw}
+.steps li{counter-increment:st;display:grid;grid-template-columns:7cqw 1fr;gap:2.4cqw;align-items:start;font-size:.88em}
+.steps li::before{content:counter(st);width:6.4cqw;height:6.4cqw;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:.95em;box-shadow:.5cqw .5cqw 0 rgba(28,43,78,.2)}
+.corr{width:100%;border-collapse:collapse;font-size:.78em;background:#fff;border-radius:2cqw;overflow:hidden;border:.4cqw solid rgba(28,43,78,.18)}
+.corr th{background:var(--ink);color:#fff;font-family:var(--disp);font-size:.85em;letter-spacing:.1em;text-transform:uppercase;padding:1.5cqw}
+.corr td{padding:1.5cqw;text-align:center;border-top:.28cqw solid rgba(28,43,78,.12)}
 .corr td:first-child{color:var(--teal);font-weight:600}
 
-/* figures SVG */
-.figwrap{margin-top:16px}
-.figwrap svg{width:100%;display:block}
-.fig-cap{margin-top:8px;text-align:center;font-size:.78rem;color:var(--ink-soft)}
-.figwrap svg .hl{transition:stroke-width .25s}
-.figwrap:hover svg .hl{stroke-width:4.6}
-.figwrap:hover svg .flow{animation-duration:.6s}
-.lsvg{font-family:var(--geo);font-style:italic;font-size:13px;fill:var(--ink)}
-.lsvg-sm{font-family:var(--body);font-style:normal;font-size:9.5px;font-weight:600;letter-spacing:.12em;fill:var(--blue)}
+/* figures */
+.figwrap{text-align:center}
+.figwrap svg{width:50cqw;max-width:100%;display:block;margin:0 auto}
+.figwrap.small svg{width:40cqw}
+.fig-cap{margin-top:1.4cqw;font-size:.62em;color:var(--ink-soft)}
+.lsvg{font-family:var(--geo);font-style:italic;font-size:14px;fill:var(--ink)}
+.lsvg-sm{font-family:var(--body);font-style:normal;font-size:10px;font-weight:600;letter-spacing:.1em;fill:var(--blue)}
+.flow{stroke-dasharray:7 9;animation:flow 1.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-16}}
+.draw{stroke-dasharray:640;stroke-dashoffset:640;animation:draw 1.7s .3s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pt{opacity:0;animation:ptin .4s ease forwards}
+@keyframes ptin{to{opacity:1}}
 
-/* ═══════════════════ PIÈGE ═══════════════════ */
-.piege{border:2px dashed var(--red);background:#fff8f5;padding-top:26px}
-.piege .sheet-head{padding-right:96px}
-.stamp{position:absolute;top:-15px;right:14px;transform:rotate(6deg);background:#fff;border:3px solid var(--red);color:var(--red);font-family:var(--disp);font-weight:800;font-size:.85rem;letter-spacing:.12em;padding:3px 13px;border-radius:6px;box-shadow:2px 3px 0 rgba(211,64,45,.28)}
-.pblocks{display:grid;gap:12px;margin-top:18px}
-@media(min-width:760px){.pblocks{grid-template-columns:1fr 1fr}}
-.pb{border-radius:10px;padding:14px 16px;font-size:.92rem;line-height:1.75}
-.pb-f{background:rgba(211,64,45,.06);border:1.5px solid rgba(211,64,45,.5)}
-.pb-v{background:rgba(14,122,94,.06);border:1.5px solid rgba(14,122,94,.5)}
-.tag{display:inline-block;font-family:var(--disp);font-weight:800;font-size:.68rem;letter-spacing:.18em;margin-bottom:7px}
+/* ═══════════════ PIÈGE ═══════════════ */
+.stamp{position:absolute;top:3.6cqw;right:4cqw;transform:rotate(6deg);background:#fff;border:.7cqw solid var(--red);color:var(--red);font-family:var(--disp);font-weight:800;font-size:.72em;letter-spacing:.12em;padding:.35em .9em;border-radius:1.4cqw;box-shadow:.5cqw .6cqw 0 rgba(211,64,45,.25);z-index:4}
+.piege .c-head{padding-right:22cqw}
+.pblocks{display:grid;gap:2.2cqw}
+.pb{border-radius:2.4cqw;padding:2.6cqw 3cqw;font-size:.8em;line-height:1.6}
+.pb-f{background:rgba(211,64,45,.06);border:.4cqw solid rgba(211,64,45,.5)}
+.pb-v{background:rgba(14,122,94,.06);border:.4cqw solid rgba(14,122,94,.5)}
+.tag{display:block;font-family:var(--disp);font-weight:800;font-size:.85em;letter-spacing:.12em;margin-bottom:1cqw}
 .pb-f .tag{color:var(--red)}.pb-v .tag{color:var(--teal)}
-.keep{margin-top:14px;background:#fff;border:1.5px solid rgba(28,43,78,.2);border-left:5px solid var(--gold);border-radius:8px;padding:12px 15px;font-size:.92rem;line-height:1.75}
-.keep b{font-family:var(--disp);font-size:.7rem;letter-spacing:.18em;color:#8a5c05}
+.keep{background:#fff;border:.4cqw solid rgba(28,43,78,.2);border-left:1.2cqw solid var(--gold);border-radius:2cqw;padding:2.2cqw 2.8cqw;font-size:.8em;line-height:1.6}
+.keep b{font-family:var(--disp);font-size:.85em;letter-spacing:.16em;color:#8a5c05}
 
-/* ═══════════════════ QUIZ ═══════════════════ */
-.qgrid{display:grid;gap:12px;margin-top:16px}
-@media(min-width:860px){.qgrid{grid-template-columns:1fr 1fr}}
-.q{display:flex;flex-direction:column;gap:10px;background:#fff;border:1.5px solid rgba(28,43,78,.18);border-radius:12px;padding:15px;transition:border-color .25s,box-shadow .25s}
-.q:hover{border-color:rgba(36,86,166,.55);box-shadow:0 10px 22px -16px rgba(28,43,78,.5)}
+/* ═══════════════ QUIZ (accordéon : 1 réponse à la fois, la page ne bouge pas) ═══════════════ */
+.qgrid{display:grid;gap:2cqw}
+.q{background:#fff;border:.4cqw solid rgba(28,43,78,.2);border-radius:2.4cqw;padding:2.4cqw 2.8cqw;display:flex;flex-direction:column;gap:1.6cqw;transition:border-color .25s}
 .q.done{border-color:rgba(14,122,94,.6)}
-.q-head{display:flex;gap:9px;align-items:flex-start;font-weight:600;font-size:.94rem;line-height:1.75}
-.qn{font-family:var(--disp);font-weight:800;font-size:.78rem;letter-spacing:.1em;color:var(--blue);padding-top:2px}
-.qbtn{margin-top:auto;align-self:flex-start;cursor:pointer;font-family:var(--body);font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:#fff;border:1.5px solid var(--ink);border-radius:999px;padding:8px 15px;transition:transform .2s,background .25s,color .25s,border-color .25s}
-.qbtn:hover{transform:translateY(-2px);box-shadow:0 6px 14px -8px rgba(28,43,78,.6)}
+.q-head{display:flex;gap:1.8cqw;align-items:flex-start;font-weight:600;font-size:.84em;line-height:1.55}
+.qn{font-family:var(--disp);font-weight:800;font-size:.9em;color:var(--blue);padding-top:.1em}
+.qbtn{align-self:flex-start;cursor:pointer;font-weight:700;font-size:.6em;letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:#fff;border:.4cqw solid var(--ink);border-radius:99px;padding:.85em 1.5em;transition:transform .2s,background .25s,color .25s,border-color .25s}
+.qbtn:hover{transform:translateY(-2px)}
 .q.open .qbtn{background:#fff;color:var(--teal);border-color:var(--teal)}
-.qa{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s ease}
+.qa{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
 .qa>div{overflow:hidden;min-height:0}
 .q.open .qa{grid-template-rows:1fr}
-.qa-in{background:rgba(14,122,94,.08);border-left:4px solid var(--teal);border-radius:0 9px 9px 0;padding:10px 13px;font-size:.9rem;line-height:1.75}
-.q.open .qa-in{margin-top:2px}
-.taff{margin-top:14px;cursor:pointer;background:none;border:none;font-family:var(--body);font-weight:700;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);border-bottom:2px dashed var(--blue);padding-bottom:2px;transition:.2s}
-.taff:hover{color:var(--red);border-color:var(--red)}
-.qobj{margin-top:10px;text-align:right;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.qa-in{background:rgba(14,122,94,.08);border-left:1cqw solid var(--teal);border-radius:0 1.8cqw 1.8cqw 0;padding:1.8cqw 2.4cqw;font-size:.8em;line-height:1.6}
 
-/* ═══════════════════ SÉPARATEUR & ÉPILOGUE ═══════════════════ */
-.sep{display:flex;align-items:center;justify-content:center;gap:14px;margin:56px auto 0;max-width:420px;color:rgba(28,43,78,.4)}
-.sep::before,.sep::after{content:"";flex:1;height:2px;background:currentColor;opacity:.35}
-.sep b{font-size:1.15rem}
-.epilogue{position:relative;overflow:hidden;margin-top:70px;background:var(--cover);color:#fff;border-radius:22px;padding:48px 28px;text-align:center;box-shadow:0 30px 60px -30px rgba(20,33,61,.7)}
-.epilogue::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:30px 30px}
-.ep-kicker{font-size:.68rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-.ep-title{font-family:var(--disp);font-weight:800;font-size:clamp(1.8rem,4vw,2.6rem);margin-top:8px}
+/* ═══════════════ COUVERTURE ═══════════════ */
+.covercard .ci{gap:2.6cqw}
+.cov-kicker{font-weight:700;font-size:.56em;letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
+.covercard h1{font-family:var(--disp);font-weight:800;font-size:2.05em;line-height:1.05;letter-spacing:-.01em}
+.covercard h1 span{color:var(--gold)}
+.cov-sub{font-size:.8em;color:rgba(255,255,255,.85)}
+.cov-comp{display:flex;flex-wrap:wrap;gap:1.6cqw}
+.cov-comp span{border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:.5em 1.1em;font-size:.56em;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.cov-fig svg{width:44cqw;display:block;margin:0 auto;filter:drop-shadow(0 10px 18px rgba(0,0,0,.35))}
+.cov-toc{display:grid;gap:1.3cqw;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:2.6cqw;padding:2.4cqw 3cqw}
+.cov-toc a{display:flex;gap:2.2cqw;align-items:baseline;text-decoration:none;color:#fff;font-size:.7em;font-weight:600;transition:.2s}
+.cov-toc a b{font-family:var(--disp);font-weight:800;color:var(--gold)}
+.cov-toc a:hover{color:var(--gold)}
+.cov-flow{font-size:.62em;font-weight:600;color:rgba(255,255,255,.9);text-align:center}
+.cov-flow b{color:var(--gold)}
+.swipe{font-size:.56em;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;gap:1.5cqw;animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(.9cqw)}}
+
+/* ═══════════════ ÉPILOGUE ═══════════════ */
+.epi .ci{align-items:center;justify-content:center;text-align:center;gap:3cqw}
+.ep-kicker{font-size:.58em;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.ep-title{font-family:var(--disp);font-weight:800;font-size:1.85em;line-height:1.1}
 .ep-title span{color:var(--gold)}
-.stars{margin:16px 0 6px;font-size:2.1rem;letter-spacing:.18em}
+.stars{font-size:1.45em;letter-spacing:.15em}
 .stars i{font-style:normal;color:rgba(255,255,255,.22);transition:color .4s,text-shadow .4s}
 .stars i.on{color:var(--gold);text-shadow:0 0 18px rgba(227,155,28,.65)}
-.ep-score{font-size:.9rem;color:rgba(255,255,255,.8)}
+.ep-score{font-size:.8em;color:rgba(255,255,255,.85)}
 .ep-score b{color:var(--gold)}
-.ep-tips{max-width:60ch;margin:18px auto 0;font-size:.92rem;color:rgba(255,255,255,.85)}
-#restart{margin-top:24px;cursor:pointer;font-family:var(--body);font-weight:700;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--ink);border:none;border-radius:999px;padding:13px 26px;transition:transform .2s,box-shadow .2s}
+.ep-tips{font-size:.7em;color:rgba(255,255,255,.8);max-width:88%}
+#restart{cursor:pointer;font-weight:700;font-size:.72em;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--ink);border:none;border-radius:99px;padding:1em 2.1em;transition:transform .2s,box-shadow .2s}
 #restart:hover{transform:translateY(-3px);box-shadow:0 12px 24px -10px rgba(227,155,28,.6)}
-.credit{margin-top:26px;font-size:.7rem;letter-spacing:.06em;color:rgba(255,255,255,.5)}
+.credit{font-size:.5em;letter-spacing:.06em;color:rgba(255,255,255,.55)}
 
-/* ═══════════════════ MOBILE & ACCESSIBILITÉ ═══════════════════ */
-@media(max-width:600px){
-  .cover{padding:34px 20px}
-  .sheet{padding:18px 18px 14px}
-  .piege .sheet-head{padding-right:70px}
-  #scoreChip{top:auto;bottom:14px;right:14px}
-}
+/* accessibilité mouvement */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .draw{stroke-dashoffset:0}
@@ -215,85 +201,65 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
 </style>
 </head>
 <body>
-<div id="bar"></div>
-<div id="scoreChip" title="Points gagnés en révélant les réponses"><span class="s">★</span> Score&nbsp;: <b><span id="chipScore">0</span>&nbsp;/&nbsp;20</b></div>
 
-<nav class="rail" aria-label="Navigation des fiches">
-  <a href="#f1" data-label="Théorème direct">01</a>
-  <a href="#f2" data-label="Calculer des longueurs">02</a>
-  <a href="#f3" data-label="Configuration papillon">03</a>
-  <a href="#f4" data-label="La réciproque">04</a>
-  <a href="#f5" data-label="Rédiger &amp; applications">05</a>
-</nav>
-
-<div class="wrap">
-
-<!-- ═══════════════ COUVERTURE ═══════════════ -->
-<header class="cover" id="top">
-  <p class="cov-kicker">Mini-Fiches de Découverte · 3ᵉ · Activités géométriques</p>
-  <div class="cov-grid">
-    <div>
-      <h1>Le Théorème<br>de <span>Thalès</span> &amp; sa réciproque</h1>
-      <p class="cov-sub">Reconnaître une configuration de Thalès, calculer des longueurs grâce à la proportionnalité, justifier que deux droites sont parallèles.</p>
+<!-- ══════════ PAGE 01 · COUVERTURE ══════════ -->
+<section class="page" id="top">
+  <div class="card dark covercard">
+    <div class="ci">
+      <p class="cov-kicker">Mini-Fiches de Découverte · 3ᵉ · Activités géométriques</p>
+      <h1>Le Théorème de <span>Thalès</span> &amp; sa réciproque</h1>
+      <div class="cov-fig">
+        <svg viewBox="0 0 240 190" role="img" aria-label="Triangle ABC avec (MN) parallèle à (BC)">
+          <polygon class="draw" points="118,18 18,168 222,168" fill="rgba(36,86,166,.16)" stroke="#e8edf7" stroke-width="2.5" stroke-linejoin="round"/>
+          <line class="flow" x1="73" y1="85.5" x2="164.8" y2="85.5" stroke="#e39b1c" stroke-width="3.5" stroke-linecap="round"/>
+          <g stroke="#e39b1c" stroke-width="2" fill="none" opacity=".9">
+            <path d="M112 80 L118 85.5 L112 91"/><path d="M118 80 L124 85.5 L118 91"/>
+            <path d="M114 162.5 L120 168 L114 173.5"/><path d="M120 162.5 L126 168 L120 173.5"/>
+          </g>
+          <g fill="#e39b1c">
+            <circle class="pt" style="animation-delay:1.2s" cx="118" cy="18" r="3.4"/>
+            <circle class="pt" style="animation-delay:1.35s" cx="18" cy="168" r="3.4"/>
+            <circle class="pt" style="animation-delay:1.5s" cx="222" cy="168" r="3.4"/>
+            <circle class="pt" style="animation-delay:1.65s" cx="73" cy="85.5" r="3.4"/>
+            <circle class="pt" style="animation-delay:1.8s" cx="164.8" cy="85.5" r="3.4"/>
+          </g>
+          <g fill="#eef2fb" style="font-family:Georgia,serif;font-style:italic;font-size:14px">
+            <text class="pt" style="animation-delay:1.2s" x="113" y="11">A</text>
+            <text class="pt" style="animation-delay:1.35s" x="4" y="182">B</text>
+            <text class="pt" style="animation-delay:1.5s" x="226" y="182">C</text>
+            <text class="pt" style="animation-delay:1.65s" x="56" y="82">M</text>
+            <text class="pt" style="animation-delay:1.8s" x="170" y="82">N</text>
+          </g>
+        </svg>
+      </div>
       <div class="cov-comp"><span>Reconnaître</span><span>Calculer</span><span>Justifier</span><span>Rédiger</span></div>
-      <nav class="cov-nav" aria-label="Sommaire">
-        <a href="#f1"><b>01</b> Théorème direct</a>
-        <a href="#f2"><b>02</b> Calculer des longueurs</a>
-        <a href="#f3"><b>03</b> Configuration papillon</a>
-        <a href="#f4"><b>04</b> La réciproque</a>
-        <a href="#f5"><b>05</b> Rédiger &amp; applications</a>
+      <nav class="cov-toc" aria-label="Sommaire">
+        <a href="#p02"><b>01</b> Théorème direct · cas du triangle</a>
+        <a href="#p06"><b>02</b> Calculer des longueurs</a>
+        <a href="#p10"><b>03</b> Configuration papillon</a>
+        <a href="#p14"><b>04</b> La réciproque</a>
+        <a href="#p18"><b>05</b> Rédiger &amp; applications</a>
       </nav>
-      <p class="cov-flow">Je découvre <b>→</b> Je retiens <b>→</b> Le piège <b>→</b> Mini-quiz · M. L. Wade</p>
-      <p class="cov-meta">Quiz : 20 points · Programme de 3ᵉ (2006)</p>
-    </div>
-    <div class="cov-fig">
-      <span class="fx" style="top:2%;left:4%;font-size:1.5rem;--r:-8deg">∥</span>
-      <span class="fx" style="top:12%;right:6%;font-size:1rem;--r:6deg;animation-delay:.8s">(MN) ∥ (BC)</span>
-      <span class="fx" style="bottom:8%;left:8%;font-size:1rem;--r:-4deg;animation-delay:1.6s">AM ⁄ AB = AN ⁄ AC</span>
-      <span class="fx" style="bottom:20%;right:2%;font-size:1.7rem;--r:10deg;animation-delay:.4s">△</span>
-      <svg viewBox="0 0 240 190" role="img" aria-label="Triangle ABC avec la droite (MN) parallèle à (BC)">
-        <polygon class="draw" points="118,18 18,168 222,168" fill="rgba(36,86,166,.16)" stroke="#e8edf7" stroke-width="2.5" stroke-linejoin="round"/>
-        <line class="flow" x1="73" y1="85.5" x2="164.8" y2="85.5" stroke="#e39b1c" stroke-width="3.5" stroke-linecap="round"/>
-        <g stroke="#e39b1c" stroke-width="2" fill="none" opacity=".9">
-          <path d="M112 80 L118 85.5 L112 91"/><path d="M118 80 L124 85.5 L118 91"/>
-          <path d="M114 162.5 L120 168 L114 173.5"/><path d="M120 162.5 L126 168 L120 173.5"/>
-        </g>
-        <g fill="#e39b1c">
-          <circle class="pt" style="animation-delay:1.2s" cx="118" cy="18" r="3.4"/>
-          <circle class="pt" style="animation-delay:1.35s" cx="18" cy="168" r="3.4"/>
-          <circle class="pt" style="animation-delay:1.5s" cx="222" cy="168" r="3.4"/>
-          <circle class="pt" style="animation-delay:1.65s" cx="73" cy="85.5" r="3.4"/>
-          <circle class="pt" style="animation-delay:1.8s" cx="164.8" cy="85.5" r="3.4"/>
-        </g>
-        <g fill="#eef2fb" style="font-family:Georgia,serif;font-style:italic;font-size:14px">
-          <text class="pt" style="animation-delay:1.2s" x="113" y="11">A</text>
-          <text class="pt" style="animation-delay:1.35s" x="4" y="182">B</text>
-          <text class="pt" style="animation-delay:1.5s" x="226" y="182">C</text>
-          <text class="pt" style="animation-delay:1.65s" x="56" y="82">M</text>
-          <text class="pt" style="animation-delay:1.8s" x="170" y="82">N</text>
-        </g>
-      </svg>
+      <p class="cov-flow">Je découvre <b>→</b> Je retiens <b>→</b> Le piège <b>→</b> Mini-quiz</p>
+      <footer class="c-foot"><span>M. L. Wade · Programme 2006</span><span>01 / 22</span></footer>
+      <p class="swipe">▼ Swipe pour commencer ▼</p>
     </div>
   </div>
-  <div class="cov-down">▼</div>
-</header>
+</section>
 
-<main>
-
-<!-- ═══════════════ FICHE 01 ═══════════════ -->
-<section class="fiche" id="f1">
-  <header class="fiche-head reveal">
-    <span class="fiche-num">FICHE 01</span>
-    <h2>Théorème de Thalès · cas du triangle</h2>
-  </header>
-  <div class="sheets">
-
-    <div class="duo">
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b1">JE DÉCOUVRE</span><h3>Le théorème direct</h3></div>
+<!-- ══════════ FICHE 01 ══════════ -->
+<section class="page" id="p02">
+  <div class="card paper">
+    <div class="accent a1"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 01</span><span class="beat b1">JE DÉCOUVRE</span></div>
+        <h2>Théorème de Thalès · cas du triangle</h2>
+      </header>
+      <div class="c-body">
         <div class="thm">
           <span class="thm-tag">Théorème</span>
-          <p>Soit <var>ABC</var> un triangle. Si <var>M</var> est un point de la droite (<var>AB</var>) et <var>N</var> un point de la droite (<var>AC</var>), et si les droites (<var>MN</var>) et (<var>BC</var>) sont <strong>parallèles</strong>, alors&nbsp;:</p>
+          <p>Soit <var>ABC</var> un triangle, <var>M</var> un point de (<var>AB</var>) et <var>N</var> un point de (<var>AC</var>). Si (<var>MN</var>) ∥ (<var>BC</var>), alors&nbsp;:</p>
           <p class="formula"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span></p>
         </div>
         <div class="figwrap">
@@ -307,227 +273,297 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
             <g fill="#1c2b4e"><circle cx="118" cy="18" r="3.2"/><circle cx="18" cy="168" r="3.2"/><circle cx="222" cy="168" r="3.2"/><circle cx="73" cy="85.5" r="3.2" fill="#2456a6"/><circle cx="164.8" cy="85.5" r="3.2" fill="#2456a6"/></g>
             <g class="lsvg"><text x="113" y="12">A</text><text x="4" y="182">B</text><text x="226" y="182">C</text><text x="56" y="82" fill="#2456a6">M</text><text x="170" y="82" fill="#2456a6">N</text></g>
           </svg>
-          <p class="fig-cap">Les triangles <var>AMN</var> et <var>ABC</var> sont en position de Thalès.</p>
+          <p class="fig-cap"><var>AMN</var> et <var>ABC</var> sont en position de Thalès.</p>
         </div>
-        <p class="ex"><b>EXEMPLE&nbsp;·</b> Si <var>AM</var> = 2 et <var>AB</var> = 6, alors <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span>. Le théorème impose alors <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span> aussi.</p>
-        <p class="note">Le parallélisme est le <strong>déclencheur</strong> du théorème&nbsp;: sans (<var>MN</var>) ∥ (<var>BC</var>), aucune égalité n’est garantie.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 01 · Je découvre</span></div>
-      </article>
-
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b2">JE RETIENS</span><h3>Conditions &amp; conclusion</h3></div>
-        <div class="conds">
-          <div class="cond"><span class="cn">1</span><span>Les points <var>M</var>, <var>A</var>, <var>B</var> sont alignés <em>et</em> les points <var>N</var>, <var>A</var>, <var>C</var> sont alignés&nbsp;: deux droites <strong>sécantes en <var>A</var></strong>.</span></div>
-          <div class="cond"><span class="cn">2</span><span>Les droites (<var>MN</var>) et (<var>BC</var>) sont <strong>parallèles</strong>.</span></div>
-        </div>
-        <p style="margin-top:16px"><strong>Conclusion&nbsp;:</strong> les rapports sont égaux…</p>
-        <p class="formula" style="font-size:1.25rem"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span></p>
-        <p class="ex"><b>VÉRIFIONS&nbsp;·</b> <var>AM</var> = 2, <var>AB</var> = 6, <var>AN</var> = 3, <var>AC</var> = 9&nbsp;: <span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">3</span><span class="fd">9</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span> ✓</p>
-        <p class="note"><strong>Moyen mnémotechnique&nbsp;:</strong> chaque rapport part du <strong>sommet commun <var>A</var></strong> — longueur du petit triangle <var>AMN</var> sur la longueur correspondante du grand triangle <var>ABC</var>.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 01 · Je retiens</span></div>
-      </article>
+        <p class="ex"><b>EXEMPLE&nbsp;·</b> <var>AM</var> = 2 et <var>AB</var> = 6 → <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span>, donc <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span> aussi.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>02 / 22</span></footer>
     </div>
-
-    <article class="sheet piege reveal">
-      <span class="stamp">PIÈGE&nbsp;!</span>
-      <div class="sheet-head"><span class="beat-b b3">⚠ PIÈGE</span><h3>Le piège classique</h3></div>
-      <div class="pblocks">
-        <div class="pb pb-f"><span class="tag">✗ FAUX — « il y a deux triangles, donc Thalès »</span><p>Un segment (<var>MN</var>) tracé «&nbsp;au hasard&nbsp;» dans un triangle ne donne <strong>aucune</strong> égalité de rapports. Sans parallélisme, le théorème ne s’applique pas.</p></div>
-        <div class="pb pb-v"><span class="tag">✓ VRAI — on vérifie les deux conditions</span><p>Points alignés sur deux droites sécantes <strong>+</strong> deux droites parallèles. C’est ce qu’on écrit au tout début de la rédaction.</p></div>
-      </div>
-      <p class="keep"><b>À RETENIR&nbsp;·</b> Pas de (<var>MN</var>) ∥ (<var>BC</var>) → pas de Thalès. C’est la toute première chose à vérifier… et à rédiger.</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 01 · Piège</span></div>
-    </article>
-
-    <article class="sheet quizsheet reveal">
-      <div class="sheet-head"><span class="beat-b b4">MINI-QUIZ 1</span><h3>Théorème direct</h3><span class="spacer"></span><span class="qmeta">4 questions · 1 pt chacune</span></div>
-      <div class="qgrid">
-        <div class="q"><div class="q-head"><span class="qn">Q1</span><span>Complète&nbsp;: «&nbsp;Si <var>M</var> est un point de (<var>AB</var>), <var>N</var> un point de (<var>AC</var>) et si…&nbsp;»</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">«&nbsp;… et si (<var>MN</var>) est parallèle à (<var>BC</var>), alors <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span>.&nbsp;»</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q2</span><span>Cite les deux conditions à vérifier avant d’utiliser le théorème de Thalès.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">① <var>M</var>, <var>A</var>, <var>B</var> alignés et <var>N</var>, <var>A</var>, <var>C</var> alignés&nbsp;; ② les droites (<var>MN</var>) et (<var>BC</var>) sont parallèles.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q3</span><span>Vrai ou Faux&nbsp;: avec (<var>MN</var>) ∥ (<var>BC</var>), on a aussi <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Vrai&nbsp;: conséquence du théorème — les trois rapports <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span>, <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> et <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span> sont égaux.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q4</span><span><var>AM</var> = 2 et <var>AB</var> = 6. Que vaut le rapport&nbsp;? Que peut-on en déduire pour <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span>&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span>, donc <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span> aussi (si les droites sont parallèles).</p></div></div></div>
-      </div>
-      <button type="button" class="taff">Tout afficher</button>
-      <p class="qobj">Objectif : 4/4</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 01 · Mini-quiz</span></div>
-    </article>
   </div>
 </section>
 
-<div class="sep" aria-hidden="true"><b>∥</b></div>
+<section class="page" id="p03">
+  <div class="card paper">
+    <div class="accent a2"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 01</span><span class="beat b2">JE RETIENS</span></div>
+        <h2>Conditions &amp; conclusion</h2>
+      </header>
+      <div class="c-body">
+        <div class="conds">
+          <div class="cond"><span class="cn">1</span><span><var>M</var>, <var>A</var>, <var>B</var> alignés <em>et</em> <var>N</var>, <var>A</var>, <var>C</var> alignés&nbsp;: deux droites <strong>sécantes en <var>A</var></strong>.</span></div>
+          <div class="cond"><span class="cn">2</span><span>Les droites (<var>MN</var>) et (<var>BC</var>) sont <strong>parallèles</strong>.</span></div>
+        </div>
+        <p class="formula" style="font-size:1.35em"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span></p>
+        <p class="ex"><b>VÉRIFIONS&nbsp;·</b> <var>AM</var>=2, <var>AB</var>=6, <var>AN</var>=3, <var>AC</var>=9&nbsp;: <span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">3</span><span class="fd">9</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span> ✓</p>
+        <p class="note"><strong>Moyen mnémotechnique&nbsp;:</strong> chaque rapport part du sommet commun <var>A</var> — côté du <strong>petit</strong> triangle <var>AMN</var> sur côté correspondant du <strong>grand</strong> triangle <var>ABC</var>.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>03 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-<!-- ═══════════════ FICHE 02 ═══════════════ -->
-<section class="fiche" id="f2">
-  <header class="fiche-head reveal">
-    <span class="fiche-num">FICHE 02</span>
-    <h2>Position de Thalès &amp; calcul de longueurs</h2>
-  </header>
-  <div class="sheets">
+<section class="page" id="p04">
+  <div class="card paper piege">
+    <div class="accent a3"></div>
+    <div class="ci">
+      <span class="stamp">PIÈGE&nbsp;!</span>
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 01</span><span class="beat b3">⚠ PIÈGE</span></div>
+        <h2>Le piège classique</h2>
+      </header>
+      <div class="c-body">
+        <div class="pblocks">
+          <div class="pb pb-f"><span class="tag">✗ FAUX — « il y a deux triangles, donc Thalès »</span><p>Un segment (<var>MN</var>) tracé «&nbsp;au hasard&nbsp;» dans un triangle ne donne <strong>aucune</strong> égalité de rapports.</p></div>
+          <div class="pb pb-v"><span class="tag">✓ VRAI — on vérifie les deux conditions</span><p>Points alignés sur deux sécantes <strong>+</strong> (<var>MN</var>) ∥ (<var>BC</var>). C’est ce qu’on écrit au début de la rédaction.</p></div>
+        </div>
+        <p class="keep"><b>À RETENIR&nbsp;·</b> Pas de (<var>MN</var>) ∥ (<var>BC</var>) → pas de Thalès. Première chose à vérifier… et à rédiger.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>04 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-    <div class="duo">
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b1">JE DÉCOUVRE</span><h3>Trois rapports égaux</h3></div>
+<section class="page" id="p05">
+  <div class="card paper">
+    <div class="accent a4"></div>
+    <div class="ci" data-fiche="1">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 01</span><span class="beat b4">MINI-QUIZ 1</span></div>
+        <h2>Théorème direct · 4 questions · 1 pt chacune</h2>
+      </header>
+      <div class="c-body">
+        <div class="qgrid">
+          <div class="q"><div class="q-head"><span class="qn">Q1</span><span>Complète&nbsp;: si (<var>MN</var>) ∥ (<var>BC</var>), alors <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = …</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">… = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q2</span><span>Cite les deux conditions pour utiliser le théorème.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">① <var>M</var>,<var>A</var>,<var>B</var> et <var>N</var>,<var>A</var>,<var>C</var> alignés&nbsp;; ② (<var>MN</var>) ∥ (<var>BC</var>).</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q3</span><span>Vrai ou Faux&nbsp;: avec (<var>MN</var>) ∥ (<var>BC</var>), <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Vrai&nbsp;: conséquence du théorème, les trois rapports <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span> sont égaux.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q4</span><span><var>AM</var> = 2, <var>AB</var> = 6. Que vaut le rapport&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span>, donc <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span> aussi.</p></div></div></div>
+        </div>
+      </div>
+      <footer class="c-foot"><span>Objectif : 4/4</span><span class="fs">★ <b id="fs1">0</b>/4</span><span>05 / 22</span></footer>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FICHE 02 ══════════ -->
+<section class="page" id="p06">
+  <div class="card paper">
+    <div class="accent a1"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 02</span><span class="beat b1">JE DÉCOUVRE</span></div>
+        <h2>Trois rapports égaux</h2>
+      </header>
+      <div class="c-body">
         <div class="thm">
           <span class="thm-tag g">Conséquence</span>
-          <p>Si deux triangles sont en position de Thalès, alors leurs <strong>côtés correspondants sont proportionnels</strong>&nbsp;:</p>
+          <p>Si deux triangles sont en position de Thalès, leurs <strong>côtés correspondants sont proportionnels</strong>&nbsp;:</p>
           <p class="formula"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span></p>
         </div>
         <div class="figwrap">
-          <svg viewBox="0 0 240 190" role="img" aria-label="Petit triangle AMN et grand triangle ABC avec côtés correspondants colorés">
+          <svg viewBox="0 0 240 190" role="img" aria-label="Côtés correspondants colorés">
             <polygon points="118,18 18,168 222,168" fill="rgba(36,86,166,.05)"/>
-            <g stroke="#2456a6" stroke-width="3" stroke-linecap="round">
-              <line class="hl" x1="118" y1="18" x2="73" y2="85.5"/><line class="hl" x1="118" y1="18" x2="164.8" y2="85.5"/><line class="hl flow" x1="73" y1="85.5" x2="164.8" y2="85.5"/>
+            <g stroke="#2456a6" stroke-width="3.4" stroke-linecap="round">
+              <line x1="118" y1="18" x2="73" y2="85.5"/><line x1="118" y1="18" x2="164.8" y2="85.5"/><line class="flow" x1="73" y1="85.5" x2="164.8" y2="85.5"/>
             </g>
             <g stroke="#1c2b4e" stroke-width="2.2" stroke-linecap="round">
-              <line class="hl" x1="73" y1="85.5" x2="18" y2="168"/><line class="hl" x1="164.8" y1="85.5" x2="222" y2="168"/><line class="hl" x1="18" y1="168" x2="222" y2="168"/>
+              <line x1="73" y1="85.5" x2="18" y2="168"/><line x1="164.8" y1="85.5" x2="222" y2="168"/><line x1="18" y1="168" x2="222" y2="168"/>
             </g>
             <g stroke="#d3402b" stroke-width="1.8" fill="none"><path d="M112 80 L118 85.5 L112 91"/><path d="M118 80 L124 85.5 L118 91"/><path d="M114 162.5 L120 168 L114 173.5"/><path d="M120 162.5 L126 168 L120 173.5"/></g>
             <g fill="#1c2b4e"><circle cx="118" cy="18" r="3.2"/><circle cx="18" cy="168" r="3.2"/><circle cx="222" cy="168" r="3.2"/><circle cx="73" cy="85.5" r="3.2"/><circle cx="164.8" cy="85.5" r="3.2"/></g>
             <g class="lsvg"><text x="113" y="12">A</text><text x="4" y="182">B</text><text x="226" y="182">C</text><text x="56" y="82">M</text><text x="170" y="82">N</text></g>
-            <g class="lsvg-sm"><text x="152" y="40">AMN : petit</text><text x="152" y="158">ABC : grand</text></g>
           </svg>
-          <p class="fig-cap">Bleu&nbsp;: côtés du petit triangle <var>AMN</var> · Encre&nbsp;: côtés correspondants du grand triangle <var>ABC</var>.</p>
         </div>
         <table class="corr">
           <tr><th>Côté de AMN</th><td><var>AM</var></td><td><var>AN</var></td><td><var>MN</var></td></tr>
           <tr><th>Côté de ABC</th><td><var>AB</var></td><td><var>AC</var></td><td><var>BC</var></td></tr>
         </table>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 02 · Je découvre</span></div>
-      </article>
-
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b2">JE RETIENS</span><h3>La quatrième proportionnelle</h3></div>
-        <ol class="steps">
-          <li>J’écris l’égalité de Thalès <strong>avec les lettres</strong>.</li>
-          <li>Je remplace par les longueurs connues.</li>
-          <li>Je calcule la longueur manquante par <strong>produit en croix</strong>.</li>
-        </ol>
-        <p class="ex"><b>EXEMPLE GUIDÉ&nbsp;·</b> <var>AM</var> = 3, <var>AB</var> = 5, <var>AC</var> = 10 et (<var>MN</var>) ∥ (<var>BC</var>).<br>
-        D’après Thalès&nbsp;: <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn">3</span><span class="fd">5</span></span>, donc <var>AN</var> = 10 × <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <strong>6</strong>.</p>
-        <p class="note"><strong>Astuce&nbsp;:</strong> les rapports s’utilisent aussi «&nbsp;à l’envers&nbsp;» — si <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span>, alors <span class="fr"><span class="fn"><var>AB</var></span><span class="fd"><var>AM</var></span></span> = <span class="fr"><span class="fn"><var>AC</var></span><span class="fd"><var>AN</var></span></span>.</p>
-        <p class="note" style="border-left-color:var(--teal);background:rgba(14,122,94,.08)"><strong>Au programme&nbsp;:</strong> la démonstration du théorème est faite en classe (méthode des aires). On se limite au cas de deux triangles en position de Thalès.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 02 · Je retiens</span></div>
-      </article>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>06 / 22</span></footer>
     </div>
-
-    <article class="sheet piege reveal">
-      <span class="stamp">PIÈGE&nbsp;!</span>
-      <div class="sheet-head"><span class="beat-b b3">⚠ PIÈGE</span><h3>Le piège classique</h3></div>
-      <div class="pblocks">
-        <div class="pb pb-f"><span class="tag">✗ FAUX — mélanger les côtés</span><p><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>AC</var></span></span>&nbsp;? Non&nbsp;! <var>MN</var> correspond à <var>BC</var>, pas à <var>AC</var>. Chaque côté du petit triangle va avec <strong>son</strong> côté du grand.</p></div>
-        <div class="pb pb-v"><span class="tag">✓ VRAI — toujours la même correspondance</span><p><var>AM</var> ↔ <var>AB</var> · <var>AN</var> ↔ <var>AC</var> · <var>MN</var> ↔ <var>BC</var>. On part toujours du sommet commun <var>A</var>.</p></div>
-      </div>
-      <p class="keep"><b>RÉFLEXE&nbsp;·</b> Avant de calculer, je colorie (ou je repère) les deux triangles et j’associe leurs côtés un à un.</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 02 · Piège</span></div>
-    </article>
-
-    <article class="sheet quizsheet reveal">
-      <div class="sheet-head"><span class="beat-b b4">MINI-QUIZ 2</span><h3>Calculer des longueurs</h3><span class="spacer"></span><span class="qmeta">4 questions · 1 pt chacune</span></div>
-      <div class="qgrid">
-        <div class="q"><div class="q-head"><span class="qn">Q1</span><span><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> et <var>AC</var> = 10. Calcule <var>AN</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> donc <var>AN</var> = 10 × <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <strong>6</strong>.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q2</span><span><var>AM</var> = 3, <var>AB</var> = 5, <var>BC</var> = 10 et (<var>MN</var>) ∥ (<var>BC</var>). Calcule <var>MN</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span> = <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn">3</span><span class="fd">5</span></span>, donc <var>MN</var> = 10 × <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <strong>6</strong>.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q3</span><span><var>AM</var> = 2, <var>AB</var> = 8, <var>AN</var> = 3 et (<var>MN</var>) ∥ (<var>BC</var>). Calcule <var>AC</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">2</span><span class="fd">8</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">4</span></span>, donc <var>AC</var> = 3 × 4 = <strong>12</strong>.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q4</span><span>Vrai ou Faux&nbsp;: on peut aussi écrire <span class="fr"><span class="fn"><var>AB</var></span><span class="fd"><var>AM</var></span></span> = <span class="fr"><span class="fn"><var>AC</var></span><span class="fd"><var>AN</var></span></span>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Vrai&nbsp;: si deux rapports sont égaux, leurs inverses le sont aussi. Attention toutefois à garder les côtés correspondants.</p></div></div></div>
-      </div>
-      <button type="button" class="taff">Tout afficher</button>
-      <p class="qobj">Objectif : 4/4</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 02 · Mini-quiz</span></div>
-    </article>
   </div>
 </section>
 
-<div class="sep" aria-hidden="true"><b>∥</b></div>
+<section class="page" id="p07">
+  <div class="card paper">
+    <div class="accent a2"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 02</span><span class="beat b2">JE RETIENS</span></div>
+        <h2>La quatrième proportionnelle</h2>
+      </header>
+      <div class="c-body">
+        <ol class="steps">
+          <li>J’écris l’égalité de Thalès <strong>avec les lettres</strong>.</li>
+          <li>Je remplace par les longueurs connues.</li>
+          <li>Je calcule par <strong>produit en croix</strong>.</li>
+        </ol>
+        <p class="ex"><b>EXEMPLE GUIDÉ&nbsp;·</b> <var>AM</var>=3, <var>AB</var>=5, <var>AC</var>=10, (<var>MN</var>)∥(<var>BC</var>)&nbsp;:<br><span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> donc <var>AN</var> = 10 × <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <strong>6</strong>.</p>
+        <p class="note"><strong>Astuce&nbsp;:</strong> les rapports marchent «&nbsp;à l’envers&nbsp;» — si <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span>, alors <span class="fr"><span class="fn"><var>AB</var></span><span class="fd"><var>AM</var></span></span> = <span class="fr"><span class="fn"><var>AC</var></span><span class="fd"><var>AN</var></span></span>.</p>
+        <p class="note t"><strong>Programme&nbsp;:</strong> la démonstration du théorème est faite en classe (méthode des aires).</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>07 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-<!-- ═══════════════ FICHE 03 ═══════════════ -->
-<section class="fiche" id="f3">
-  <header class="fiche-head reveal">
-    <span class="fiche-num">FICHE 03</span>
-    <h2>La configuration « papillon »</h2>
-  </header>
-  <div class="sheets">
+<section class="page" id="p08">
+  <div class="card paper piege">
+    <div class="accent a3"></div>
+    <div class="ci">
+      <span class="stamp">PIÈGE&nbsp;!</span>
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 02</span><span class="beat b3">⚠ PIÈGE</span></div>
+        <h2>Le piège classique</h2>
+      </header>
+      <div class="c-body">
+        <div class="pblocks">
+          <div class="pb pb-f"><span class="tag">✗ FAUX — mélanger les côtés</span><p><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>AC</var></span></span>&nbsp;? Non&nbsp;! <var>MN</var> correspond à <var>BC</var>, pas à <var>AC</var>.</p></div>
+          <div class="pb pb-v"><span class="tag">✓ VRAI — même correspondance</span><p><var>AM</var> ↔ <var>AB</var> · <var>AN</var> ↔ <var>AC</var> · <var>MN</var> ↔ <var>BC</var>. On part toujours du sommet commun <var>A</var>.</p></div>
+        </div>
+        <p class="keep"><b>RÉFLEXE&nbsp;·</b> Avant de calculer, je repère les deux triangles et j’associe leurs côtés un à un.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>08 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-    <div class="duo">
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b1">JE DÉCOUVRE</span><h3>Deux droites sécantes, deux parallèles</h3></div>
-        <p>Deux droites se coupent en <var>A</var>. Deux droites <strong>parallèles</strong> les coupent en <var>M</var>, <var>B</var> et en <var>N</var>, <var>C</var>. Les triangles <var>AMN</var> et <var>ABC</var> sont encore en position de Thalès&nbsp;:</p>
-        <p class="formula" style="font-size:1.25rem"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span></p>
+<section class="page" id="p09">
+  <div class="card paper">
+    <div class="accent a4"></div>
+    <div class="ci" data-fiche="2">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 02</span><span class="beat b4">MINI-QUIZ 2</span></div>
+        <h2>Calculer des longueurs · 4 questions</h2>
+      </header>
+      <div class="c-body">
+        <div class="qgrid">
+          <div class="q"><div class="q-head"><span class="qn">Q1</span><span><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> et <var>AC</var> = 10. Calcule <var>AN</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><var>AN</var> = 10 × <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <strong>6</strong>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q2</span><span><var>AM</var>=3, <var>AB</var>=5, <var>BC</var>=10, (<var>MN</var>)∥(<var>BC</var>). Calcule <var>MN</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span> = <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> → <var>MN</var> = 10 × <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <strong>6</strong>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q3</span><span><var>AM</var>=2, <var>AB</var>=8, <var>AN</var>=3, (<var>MN</var>)∥(<var>BC</var>). Calcule <var>AC</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn">1</span><span class="fd">4</span></span> → <var>AC</var> = 3 × 4 = <strong>12</strong>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q4</span><span>Vrai ou Faux&nbsp;: <span class="fr"><span class="fn"><var>AB</var></span><span class="fd"><var>AM</var></span></span> = <span class="fr"><span class="fn"><var>AC</var></span><span class="fd"><var>AN</var></span></span>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Vrai&nbsp;: rapports égaux → inverses égaux. On garde les côtés correspondants.</p></div></div></div>
+        </div>
+      </div>
+      <footer class="c-foot"><span>Objectif : 4/4</span><span class="fs">★ <b id="fs2">0</b>/4</span><span>09 / 22</span></footer>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FICHE 03 · PAPILLON ══════════ -->
+<section class="page" id="p10">
+  <div class="card paper">
+    <div class="accent a1"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 03</span><span class="beat b1">JE DÉCOUVRE</span></div>
+        <h2>La configuration « papillon »</h2>
+      </header>
+      <div class="c-body">
+        <p style="font-size:.9em">Deux droites se coupent en <var>A</var>&nbsp;; deux <strong>parallèles</strong> les coupent en <var>M</var>,<var>B</var> et <var>N</var>,<var>C</var>&nbsp;: c’est encore une position de Thalès.</p>
+        <p class="formula" style="font-size:1.3em"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span></p>
         <div class="figwrap">
-          <svg viewBox="0 0 240 190" role="img" aria-label="Configuration papillon : deux triangles opposés par le sommet A">
+          <svg viewBox="0 0 240 190" role="img" aria-label="Configuration papillon">
             <polygon points="120,95 52,27 188,27" fill="rgba(14,122,94,.09)"/>
             <polygon points="120,95 52,163 188,163" fill="rgba(36,86,166,.09)"/>
             <line x1="52" y1="27" x2="188" y2="163" stroke="#1c2b4e" stroke-width="2"/>
             <line x1="188" y1="27" x2="52" y2="163" stroke="#1c2b4e" stroke-width="2"/>
-            <line class="flow hl" x1="52" y1="27" x2="188" y2="27" stroke="#0e7a5e" stroke-width="2.6"/>
-            <line class="flow hl" x1="52" y1="163" x2="188" y2="163" stroke="#2456a6" stroke-width="2.6"/>
+            <line class="flow" x1="52" y1="27" x2="188" y2="27" stroke="#0e7a5e" stroke-width="2.6"/>
+            <line class="flow" x1="52" y1="163" x2="188" y2="163" stroke="#2456a6" stroke-width="2.6"/>
             <g stroke="#d3402b" stroke-width="1.8" fill="none"><path d="M114 21.5 L120 27 L114 32.5"/><path d="M120 21.5 L126 27 L120 32.5"/><path d="M114 157.5 L120 163 L114 168.5"/><path d="M120 157.5 L126 163 L120 168.5"/></g>
             <g fill="#1c2b4e"><circle cx="120" cy="95" r="3.4"/><circle cx="52" cy="27" r="3.2"/><circle cx="188" cy="27" r="3.2"/><circle cx="52" cy="163" r="3.2"/><circle cx="188" cy="163" r="3.2"/></g>
             <g class="lsvg"><text x="126" y="99">A</text><text x="38" y="23">M</text><text x="194" y="23">N</text><text x="194" y="177">C</text><text x="38" y="177">B</text></g>
           </svg>
-          <p class="fig-cap">Le point <var>A</var> est le sommet commun&nbsp;: les deux triangles sont «&nbsp;opposés par le sommet&nbsp;».</p>
+          <p class="fig-cap">Triangles opposés par le sommet <var>A</var>.</p>
         </div>
-        <p class="ex"><b>EXEMPLE&nbsp;·</b> <var>MA</var> = 2, <var>AB</var> = 6 et <var>MN</var> = 4 avec (<var>MN</var>) ∥ (<var>BC</var>). Rapport&nbsp;: <span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span>, donc <span class="fr"><span class="fn">4</span><span class="fd"><var>BC</var></span></span> = <span class="fr"><span class="fn">1</span><span class="fd">3</span></span> et <var>BC</var> = <strong>12</strong>.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 03 · Je découvre</span></div>
-      </article>
-
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b2">JE RETIENS</span><h3>Deux dessins, un seul théorème</h3></div>
-        <div class="conds">
-          <div class="cond"><span class="cn">△</span><span><strong>Configuration emboîtée</strong>&nbsp;: le petit triangle est à l’intérieur du grand.</span></div>
-          <div class="cond"><span class="cn">⧓</span><span><strong>Configuration papillon</strong>&nbsp;: les deux triangles sont opposés par le sommet <var>A</var>.</span></div>
-        </div>
-        <p class="note" style="margin-top:16px">Dans les deux cas&nbsp;: <strong>deux droites sécantes coupées par deux droites parallèles</strong> → les rapports <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span>, <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> et <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span> sont égaux. Ce sont des <strong>rapports de longueurs</strong>&nbsp;: ils sont toujours positifs.</p>
-        <p class="ex"><b>RÉFLEXE&nbsp;·</b> ① Je repère le point d’intersection <var>A</var>. ② Je repère les deux droites parallèles. ③ J’écris les rapports en partant de <var>A</var>.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 03 · Je retiens</span></div>
-      </article>
+        <p class="ex"><b>EXEMPLE&nbsp;·</b> <var>MA</var>=2, <var>AB</var>=6, <var>MN</var>=4 → <span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">4</span><span class="fd"><var>BC</var></span></span> donc <var>BC</var> = <strong>12</strong>.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>10 / 22</span></footer>
     </div>
-
-    <article class="sheet piege reveal">
-      <span class="stamp">PIÈGE&nbsp;!</span>
-      <div class="sheet-head"><span class="beat-b b3">⚠ PIÈGE</span><h3>Le piège classique</h3></div>
-      <div class="pblocks">
-        <div class="pb pb-f"><span class="tag">✗ FAUX — « en papillon, ça ne marche plus »</span><p>Certains pensent que les rapports changent de signe ou de formule parce que les triangles sont croisés. Non&nbsp;: ce sont des longueurs, toujours positives.</p></div>
-        <div class="pb pb-v"><span class="tag">✓ VRAI — l’égalité reste identique</span><p><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span>, exactement comme dans le cas emboîté.</p></div>
-      </div>
-      <p class="keep"><b>À RETENIR&nbsp;·</b> Papillon ou emboîté, c’est le même théorème. Seul le dessin change&nbsp;!</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 03 · Piège</span></div>
-    </article>
-
-    <article class="sheet quizsheet reveal">
-      <div class="sheet-head"><span class="beat-b b4">MINI-QUIZ 3</span><h3>Configuration papillon</h3><span class="spacer"></span><span class="qmeta">4 questions · 1 pt chacune</span></div>
-      <div class="qgrid">
-        <div class="q"><div class="q-head"><span class="qn">Q1</span><span>En configuration papillon, écris l’égalité de Thalès.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span> — identique à la configuration emboîtée.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q2</span><span><var>MA</var> = 2, <var>AB</var> = 6, <var>NA</var> = 3 et (<var>MN</var>) ∥ (<var>BC</var>). Calcule <var>AC</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">3</span><span class="fd"><var>AC</var></span></span> → produit en croix&nbsp;: <var>AC</var> = <span class="fr"><span class="fn">3 × 6</span><span class="fd">2</span></span> = <strong>9</strong>.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q3</span><span><var>MA</var> = 2, <var>AB</var> = 6, <var>MN</var> = 4 et (<var>MN</var>) ∥ (<var>BC</var>). Calcule <var>BC</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">4</span><span class="fd"><var>BC</var></span></span> → <var>BC</var> = <span class="fr"><span class="fn">4 × 6</span><span class="fd">2</span></span> = <strong>12</strong>.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q4</span><span>Vrai ou Faux&nbsp;: «&nbsp;En papillon, les rapports peuvent être négatifs.&nbsp;»</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Faux&nbsp;: ce sont des rapports de <strong>longueurs</strong>, toujours positifs. Seule la forme du dessin change.</p></div></div></div>
-      </div>
-      <button type="button" class="taff">Tout afficher</button>
-      <p class="qobj">Objectif : 4/4</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 03 · Mini-quiz</span></div>
-    </article>
   </div>
 </section>
 
-<div class="sep" aria-hidden="true"><b>∥</b></div>
+<section class="page" id="p11">
+  <div class="card paper">
+    <div class="accent a2"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 03</span><span class="beat b2">JE RETIENS</span></div>
+        <h2>Deux dessins, un seul théorème</h2>
+      </header>
+      <div class="c-body">
+        <div class="conds">
+          <div class="cond"><span class="cn">△</span><span><strong>Emboîtée</strong>&nbsp;: le petit triangle est dans le grand.</span></div>
+          <div class="cond"><span class="cn">⧓</span><span><strong>Papillon</strong>&nbsp;: triangles opposés par le sommet <var>A</var>.</span></div>
+        </div>
+        <p class="note">Dans les deux cas&nbsp;: <strong>deux sécantes coupées par deux parallèles</strong> → mêmes rapports. Ce sont des <strong>longueurs</strong>&nbsp;: toujours positives.</p>
+        <p class="ex"><b>RÉFLEXE&nbsp;·</b> ① Je repère l’intersection <var>A</var>. ② Je repère les parallèles. ③ J’écris les rapports en partant de <var>A</var>.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>11 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-<!-- ═══════════════ FICHE 04 ═══════════════ -->
-<section class="fiche" id="f4">
-  <header class="fiche-head reveal">
-    <span class="fiche-num">FICHE 04</span>
-    <h2>La réciproque du théorème de Thalès</h2>
-  </header>
-  <div class="sheets">
+<section class="page" id="p12">
+  <div class="card paper piege">
+    <div class="accent a3"></div>
+    <div class="ci">
+      <span class="stamp">PIÈGE&nbsp;!</span>
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 03</span><span class="beat b3">⚠ PIÈGE</span></div>
+        <h2>Le piège classique</h2>
+      </header>
+      <div class="c-body">
+        <div class="pblocks">
+          <div class="pb pb-f"><span class="tag">✗ FAUX — « en papillon, ça ne marche plus »</span><p>Les rapports ne changent ni de signe ni de formule parce que les triangles sont croisés.</p></div>
+          <div class="pb pb-v"><span class="tag">✓ VRAI — l’égalité reste identique</span><p><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span>, comme dans le cas emboîté.</p></div>
+        </div>
+        <p class="keep"><b>À RETENIR&nbsp;·</b> Papillon ou emboîté, c’est le même théorème. Seul le dessin change&nbsp;!</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>12 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-    <div class="duo">
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b1">JE DÉCOUVRE</span><h3>Le théorème « à l’envers »</h3></div>
+<section class="page" id="p13">
+  <div class="card paper">
+    <div class="accent a4"></div>
+    <div class="ci" data-fiche="3">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 03</span><span class="beat b4">MINI-QUIZ 3</span></div>
+        <h2>Configuration papillon · 4 questions</h2>
+      </header>
+      <div class="c-body">
+        <div class="qgrid">
+          <div class="q"><div class="q-head"><span class="qn">Q1</span><span>En papillon, écris l’égalité de Thalès.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q2</span><span><var>MA</var>=2, <var>AB</var>=6, <var>NA</var>=3, (<var>MN</var>)∥(<var>BC</var>). Calcule <var>AC</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><var>AC</var> = <span class="fr"><span class="fn">3 × 6</span><span class="fd">2</span></span> = <strong>9</strong>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q3</span><span><var>MA</var>=2, <var>AB</var>=6, <var>MN</var>=4. Calcule <var>BC</var>.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn">2</span><span class="fd">6</span></span> = <span class="fr"><span class="fn">4</span><span class="fd"><var>BC</var></span></span> → <var>BC</var> = <strong>12</strong>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q4</span><span>Vrai ou Faux&nbsp;: en papillon, les rapports peuvent être négatifs.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Faux&nbsp;: rapports de <strong>longueurs</strong>, toujours positifs.</p></div></div></div>
+        </div>
+      </div>
+      <footer class="c-foot"><span>Objectif : 4/4</span><span class="fs">★ <b id="fs3">0</b>/4</span><span>13 / 22</span></footer>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FICHE 04 · RÉCIPROQUE ══════════ -->
+<section class="page" id="p14">
+  <div class="card paper">
+    <div class="accent a1"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 04</span><span class="beat b1">JE DÉCOUVRE</span></div>
+        <h2>La réciproque · prouver un parallélisme</h2>
+      </header>
+      <div class="c-body">
         <div class="thm">
           <span class="thm-tag t">Réciproque</span>
-          <p>Si les points <var>A</var>, <var>M</var>, <var>B</var> d’une part et les points <var>A</var>, <var>N</var>, <var>C</var> d’autre part sont <strong>alignés dans le même ordre</strong>, et si</p>
+          <p>Si <var>A</var>,<var>M</var>,<var>B</var> d’une part et <var>A</var>,<var>N</var>,<var>C</var> d’autre part sont <strong>alignés dans le même ordre</strong>, et si</p>
           <p class="formula"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span></p>
-          <p style="text-align:center">alors les droites (<var>MN</var>) et (<var>BC</var>) sont <strong>parallèles</strong>.</p>
+          <p style="text-align:center">alors (<var>MN</var>) ∥ (<var>BC</var>).</p>
         </div>
         <div class="figwrap">
-          <svg viewBox="0 0 240 190" role="img" aria-label="Triangle avec (MN) en pointillés : est-elle parallèle à (BC) ?">
+          <svg viewBox="0 0 240 190" role="img" aria-label="(MN) en pointillés : parallèle à (BC) ?">
             <polygon points="118,18 18,168 222,168" fill="rgba(36,86,166,.05)"/>
             <line x1="118" y1="18" x2="18" y2="168" stroke="#1c2b4e" stroke-width="2"/>
             <line x1="118" y1="18" x2="222" y2="168" stroke="#1c2b4e" stroke-width="2"/>
@@ -537,85 +573,120 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
             <text x="118" y="68" text-anchor="middle" style="font-family:Georgia,serif;font-weight:700;font-size:13px;fill:#1c2b4e">?</text>
             <g fill="#1c2b4e"><circle cx="118" cy="18" r="3.2"/><circle cx="18" cy="168" r="3.2"/><circle cx="222" cy="168" r="3.2"/><circle cx="73" cy="85.5" r="3.2"/><circle cx="164.8" cy="85.5" r="3.2"/></g>
             <g class="lsvg"><text x="113" y="12">A</text><text x="4" y="182">B</text><text x="226" y="182">C</text><text x="56" y="82">M</text><text x="170" y="82">N</text></g>
-            <g class="lsvg-sm"><text x="4" y="66">AM/AB = 0,6</text><text x="162" y="110">AN/AC = 0,6</text></g>
+            <g class="lsvg-sm"><text x="2" y="66">AM/AB = 0,6</text><text x="160" y="112">AN/AC = 0,6</text></g>
           </svg>
-          <p class="fig-cap">Les rapports sont égaux… donc (<var>MN</var>) ∥ (<var>BC</var>)&nbsp;!</p>
         </div>
-        <p class="ex"><b>EXEMPLE&nbsp;·</b> <var>AM</var> = 4,2&nbsp;; <var>AB</var> = 7&nbsp;; <var>AN</var> = 3,6&nbsp;; <var>AC</var> = 6. On a <span class="fr"><span class="fn">4,2</span><span class="fd">7</span></span> = 0,6 et <span class="fr"><span class="fn">3,6</span><span class="fd">6</span></span> = 0,6&nbsp;: les rapports sont égaux, donc (<var>MN</var>) ∥ (<var>BC</var>).</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 04 · Je découvre</span></div>
-      </article>
-
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b2">JE RETIENS</span><h3>La méthode en 3 étapes</h3></div>
-        <ol class="steps">
-          <li>Je calcule <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> et <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> <strong>séparément</strong>, sans arrondir.</li>
-          <li>Je compare les deux valeurs (fractions ou produit en croix).</li>
-          <li>Je conclus en citant la <strong>réciproque</strong> et l’ordre des points.</li>
-        </ol>
-        <p class="note"><strong>Bonne pratique&nbsp;:</strong> comparer les fractions avec le produit en croix plutôt que des décimaux arrondis — l’égalité doit être <em>exacte</em>.</p>
-        <p class="ex"><b>CONTRAPOSÉE&nbsp;·</b> Si les points sont alignés dans le même ordre mais que les rapports sont <strong>différents</strong>, alors les droites ne sont <strong>pas</strong> parallèles.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 04 · Je retiens</span></div>
-      </article>
+        <p class="ex"><b>EXEMPLE&nbsp;·</b> <var>AM</var>=4,2&nbsp;; <var>AB</var>=7&nbsp;; <var>AN</var>=3,6&nbsp;; <var>AC</var>=6 → <span class="fr"><span class="fn">4,2</span><span class="fd">7</span></span> = <span class="fr"><span class="fn">3,6</span><span class="fd">6</span></span> = 0,6 donc (<var>MN</var>) ∥ (<var>BC</var>).</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>14 / 22</span></footer>
     </div>
-
-    <article class="sheet piege reveal">
-      <span class="stamp">PIÈGE&nbsp;!</span>
-      <div class="sheet-head"><span class="beat-b b3">⚠ PIÈGE</span><h3>Le piège classique</h3></div>
-      <div class="pblocks">
-        <div class="pb pb-f"><span class="tag">✗ FAUX — « rapports égaux ⇒ parallèles » tout court</span><p>Il faut aussi que <var>A</var>, <var>M</var>, <var>B</var> et <var>A</var>, <var>N</var>, <var>C</var> soient alignés <strong>dans le même ordre</strong>. Sans cette phrase, la conclusion n’est pas justifiée.</p></div>
-        <div class="pb pb-v"><span class="tag">✓ VRAI — on calcule exactement</span><p>On compare des valeurs exactes (fractions, produit en croix) et on rédige&nbsp;: «&nbsp;Les points sont alignés dans le même ordre et les rapports sont égaux, donc…&nbsp;»</p></div>
-      </div>
-      <p class="keep"><b>À RETENIR&nbsp;·</b> Le théorème direct prouve des <em>égalités de rapports</em> (longueurs) · la réciproque prouve un <em>parallélisme</em>. Ne jamais confondre les deux sens.</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 04 · Piège</span></div>
-    </article>
-
-    <article class="sheet quizsheet reveal">
-      <div class="sheet-head"><span class="beat-b b4">MINI-QUIZ 4</span><h3>La réciproque</h3><span class="spacer"></span><span class="qmeta">4 questions · 1 pt chacune</span></div>
-      <div class="qgrid">
-        <div class="q"><div class="q-head"><span class="qn">Q1</span><span>À quoi sert la réciproque du théorème de Thalès&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">À <strong>prouver que deux droites sont parallèles</strong>. Le théorème direct, lui, sert à calculer des longueurs.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q2</span><span><var>AM</var> = 4,2&nbsp;; <var>AB</var> = 7&nbsp;; <var>AN</var> = 3,6&nbsp;; <var>AC</var> = 6, points alignés dans le même ordre. Conclus.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn">4,2</span><span class="fd">7</span></span> = 0,6 et <span class="fr"><span class="fn">3,6</span><span class="fd">6</span></span> = 0,6. Les rapports sont égaux&nbsp;: d’après la réciproque de Thalès, (<var>MN</var>) ∥ (<var>BC</var>).</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q3</span><span>Vrai ou Faux&nbsp;: l’égalité <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> suffit à conclure.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Presque faux&nbsp;: il faut aussi préciser que les points sont <strong>alignés dans le même ordre</strong> (<var>A</var>, <var>M</var>, <var>B</var> et <var>A</var>, <var>N</var>, <var>C</var>).</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q4</span><span><var>AM</var> = 3&nbsp;; <var>AB</var> = 5&nbsp;; <var>AN</var> = 4&nbsp;; <var>AC</var> = 7. Les droites (<var>MN</var>) et (<var>BC</var>) sont-elles parallèles&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = 0,6 mais <span class="fr"><span class="fn">4</span><span class="fd">7</span></span> ≈ 0,571&nbsp;: rapports différents, donc les droites ne sont <strong>pas</strong> parallèles (contraposée).</p></div></div></div>
-      </div>
-      <button type="button" class="taff">Tout afficher</button>
-      <p class="qobj">Objectif : 4/4</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 04 · Mini-quiz</span></div>
-    </article>
   </div>
 </section>
 
-<div class="sep" aria-hidden="true"><b>∥</b></div>
+<section class="page" id="p15">
+  <div class="card paper">
+    <div class="accent a2"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 04</span><span class="beat b2">JE RETIENS</span></div>
+        <h2>La méthode en 3 étapes</h2>
+      </header>
+      <div class="c-body">
+        <ol class="steps">
+          <li>Je calcule <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> et <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> <strong>séparément</strong>, sans arrondir.</li>
+          <li>Je compare (fractions ou produit en croix).</li>
+          <li>Je conclus&nbsp;: <strong>réciproque + même ordre</strong>.</li>
+        </ol>
+        <p class="note"><strong>Bonne pratique&nbsp;:</strong> comparer des valeurs <em>exactes</em> — produit en croix plutôt que décimaux arrondis.</p>
+        <p class="ex"><b>CONTRAPOSÉE&nbsp;·</b> Même ordre mais rapports <strong>différents</strong> → les droites ne sont <strong>pas</strong> parallèles.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>15 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-<!-- ═══════════════ FICHE 05 ═══════════════ -->
-<section class="fiche" id="f5">
-  <header class="fiche-head reveal">
-    <span class="fiche-num">FICHE 05</span>
-    <h2>Rédiger &amp; applications</h2>
-  </header>
-  <div class="sheets">
+<section class="page" id="p16">
+  <div class="card paper piege">
+    <div class="accent a3"></div>
+    <div class="ci">
+      <span class="stamp">PIÈGE&nbsp;!</span>
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 04</span><span class="beat b3">⚠ PIÈGE</span></div>
+        <h2>Le piège classique</h2>
+      </header>
+      <div class="c-body">
+        <div class="pblocks">
+          <div class="pb pb-f"><span class="tag">✗ FAUX — « rapports égaux ⇒ parallèles »</span><p>Sans préciser que <var>A</var>,<var>M</var>,<var>B</var> et <var>A</var>,<var>N</var>,<var>C</var> sont alignés <strong>dans le même ordre</strong>, la conclusion n’est pas justifiée.</p></div>
+          <div class="pb pb-v"><span class="tag">✓ VRAI — on calcule exactement</span><p>«&nbsp;Les points sont alignés dans le même ordre et les rapports sont égaux, donc (<var>MN</var>) ∥ (<var>BC</var>).&nbsp;»</p></div>
+        </div>
+        <p class="keep"><b>À RETENIR&nbsp;·</b> Théorème direct → des <em>longueurs</em>. Réciproque → un <em>parallélisme</em>. Jamais l’inverse.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>16 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-    <div class="duo">
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b1">JE DÉCOUVRE</span><h3>La rédaction modèle</h3></div>
+<section class="page" id="p17">
+  <div class="card paper">
+    <div class="accent a4"></div>
+    <div class="ci" data-fiche="4">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 04</span><span class="beat b4">MINI-QUIZ 4</span></div>
+        <h2>La réciproque · 4 questions</h2>
+      </header>
+      <div class="c-body">
+        <div class="qgrid">
+          <div class="q"><div class="q-head"><span class="qn">Q1</span><span>À quoi sert la réciproque de Thalès&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">À <strong>prouver que deux droites sont parallèles</strong>. Le théorème direct calcule des longueurs.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q2</span><span><var>AM</var>=4,2&nbsp;; <var>AB</var>=7&nbsp;; <var>AN</var>=3,6&nbsp;; <var>AC</var>=6, même ordre. Conclus.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">0,6 = 0,6&nbsp;: rapports égaux → d’après la réciproque, (<var>MN</var>) ∥ (<var>BC</var>).</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q3</span><span>Vrai ou Faux&nbsp;: l’égalité des rapports suffit à conclure.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Presque faux&nbsp;: il faut aussi les points <strong>alignés dans le même ordre</strong>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q4</span><span><var>AM</var>=3&nbsp;; <var>AB</var>=5&nbsp;; <var>AN</var>=4&nbsp;; <var>AC</var>=7. (<var>MN</var>) ∥ (<var>BC</var>)&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = 0,6 ≠ <span class="fr"><span class="fn">4</span><span class="fd">7</span></span> ≈ 0,571 → <strong>non parallèles</strong> (contraposée).</p></div></div></div>
+        </div>
+      </div>
+      <footer class="c-foot"><span>Objectif : 4/4</span><span class="fs">★ <b id="fs4">0</b>/4</span><span>17 / 22</span></footer>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FICHE 05 · RÉDIGER & APPLICATIONS ══════════ -->
+<section class="page" id="p18">
+  <div class="card paper">
+    <div class="accent a1"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 05</span><span class="beat b1">JE DÉCOUVRE</span></div>
+        <h2>La rédaction modèle</h2>
+      </header>
+      <div class="c-body">
         <div class="thm">
           <span class="thm-tag r">Modèle</span>
-          <p>«&nbsp;<var>ABC</var> est un triangle, <var>M</var> ∈ [<var>AB</var>], <var>N</var> ∈ [<var>AC</var>] et (<var>MN</var>) ∥ (<var>BC</var>).<br>
-          D’après le <strong>théorème de Thalès</strong>&nbsp;: <span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span>.<br>
-          On remplace&nbsp;: <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd">7,5</span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd">10</span></span>.<br>
-          Produit en croix&nbsp;: <var>AN</var> = <span class="fr"><span class="fn">7,5 × 3</span><span class="fd">5</span></span> = <strong>4,5</strong> et <var>MN</var> = <span class="fr"><span class="fn">10 × 3</span><span class="fd">5</span></span> = <strong>6</strong>.&nbsp;»</p>
+          <p>«&nbsp;<var>ABC</var> triangle, <var>M</var> ∈ [<var>AB</var>], <var>N</var> ∈ [<var>AC</var>], (<var>MN</var>) ∥ (<var>BC</var>).<br>
+          D’après le <strong>théorème de Thalès</strong>&nbsp;:</p>
+          <p class="formula" style="font-size:1.25em"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AB</var></span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd"><var>AC</var></span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd"><var>BC</var></span></span></p>
+          <p>On remplace&nbsp;: <span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd">7,5</span></span> = <span class="fr"><span class="fn"><var>MN</var></span><span class="fd">10</span></span>.<br>
+          Produit en croix&nbsp;: <var>AN</var> = <strong>4,5</strong> et <var>MN</var> = <strong>6</strong>.&nbsp;»</p>
         </div>
-        <p class="note">Trois temps, toujours dans le même ordre&nbsp;: <strong>conditions → égalité en lettres → calcul numérique</strong>.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 05 · Je découvre</span></div>
-      </article>
+        <p class="note">Trois temps, toujours&nbsp;: <strong>conditions → égalité en lettres → calcul numérique</strong>.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>18 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-      <article class="sheet reveal">
-        <div class="sheet-head"><span class="beat-b b2">JE RETIENS</span><h3>Au-delà du triangle</h3></div>
+<section class="page" id="p19">
+  <div class="card paper">
+    <div class="accent a2"></div>
+    <div class="ci">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 05</span><span class="beat b2">JE RETIENS</span></div>
+        <h2>Au-delà du triangle</h2>
+      </header>
+      <div class="c-body">
         <div class="thm">
           <span class="thm-tag g">Cas du trapèze</span>
-          <p>Soit <var>ABCD</var> un trapèze de bases (<var>AB</var>) et (<var>CD</var>), <var>M</var> un point de (<var>AD</var>) et <var>N</var> un point de (<var>BC</var>). Si (<var>MN</var>) ∥ (<var>AB</var>), alors&nbsp;:</p>
-          <p class="formula"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AD</var></span></span> = <span class="fr"><span class="fn"><var>BN</var></span><span class="fd"><var>BC</var></span></span></p>
+          <p><var>ABCD</var> trapèze de bases (<var>AB</var>) ∥ (<var>CD</var>), <var>M</var> ∈ (<var>AD</var>), <var>N</var> ∈ (<var>BC</var>). Si (<var>MN</var>) ∥ (<var>AB</var>)&nbsp;:</p>
+          <p class="formula" style="font-size:1.25em"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AD</var></span></span> = <span class="fr"><span class="fn"><var>BN</var></span><span class="fd"><var>BC</var></span></span></p>
         </div>
-        <div class="figwrap">
+        <div class="figwrap small">
           <svg viewBox="0 0 240 190" role="img" aria-label="Trapèze ABCD avec (MN) parallèle aux bases">
             <polygon points="60,28 180,28 222,162 18,162" fill="rgba(36,86,166,.06)"/>
             <line x1="60" y1="28" x2="180" y2="28" stroke="#1c2b4e" stroke-width="2.4"/>
@@ -627,136 +698,154 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
             <g fill="#1c2b4e"><circle cx="60" cy="28" r="3"/><circle cx="180" cy="28" r="3"/><circle cx="18" cy="162" r="3"/><circle cx="222" cy="162" r="3"/><circle cx="45.3" cy="74.9" r="3" fill="#2456a6"/><circle cx="194.7" cy="74.9" r="3" fill="#2456a6"/></g>
             <g class="lsvg"><text x="58" y="21">A</text><text x="176" y="21">B</text><text x="6" y="177">D</text><text x="224" y="177">C</text><text x="28" y="72" fill="#2456a6">M</text><text x="200" y="72" fill="#2456a6">N</text></g>
           </svg>
-          <p class="fig-cap">La réciproque et la conséquence existent aussi pour le trapèze.</p>
         </div>
-        <p class="ex"><b>ENCORE AU PROGRAMME&nbsp;·</b> Thalès permet de <strong>partager un segment dans un rapport donné</strong> et de <strong>placer un point d’abscisse connue</strong> sur une droite graduée.</p>
-        <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 05 · Je retiens</span></div>
-      </article>
+        <p class="ex"><b>AU PROGRAMME&nbsp;·</b> Thalès sert aussi à <strong>partager un segment dans un rapport donné</strong> et à <strong>placer un point d’abscisse connue</strong> sur une droite graduée.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>19 / 22</span></footer>
     </div>
-
-    <article class="sheet piege reveal">
-      <span class="stamp">PIÈGE&nbsp;!</span>
-      <div class="sheet-head"><span class="beat-b b3">⚠ PIÈGE</span><h3>Le piège classique</h3></div>
-      <div class="pblocks">
-        <div class="pb pb-f"><span class="tag">✗ FAUX — démarrer directement avec les nombres</span><p>«&nbsp;<span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd">7,5</span></span> donc…&nbsp;» sans citer le théorème ni vérifier les conditions&nbsp;: la démonstration ne vaut rien.</p></div>
-        <div class="pb pb-v"><span class="tag">✓ VRAI — trois temps, toujours</span><p>① Conditions (alignement + parallélisme) · ② «&nbsp;D’après le théorème de Thalès&nbsp;» + égalité en lettres · ③ remplacement et produit en croix.</p></div>
-      </div>
-      <p class="keep"><b>BONUS BARÈME&nbsp;·</b> Sur une copie, ces trois temps rapportent des points même si le calcul final contient une erreur.</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 05 · Piège</span></div>
-    </article>
-
-    <article class="sheet quizsheet reveal">
-      <div class="sheet-head"><span class="beat-b b4">MINI-QUIZ 5</span><h3>Rédaction &amp; applications</h3><span class="spacer"></span><span class="qmeta">4 questions · 1 pt chacune</span></div>
-      <div class="qgrid">
-        <div class="q"><div class="q-head"><span class="qn">Q1</span><span>Cite les trois temps d’une bonne rédaction de Thalès.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">① Vérifier et énoncer les conditions (points alignés, droites parallèles)&nbsp;; ② écrire l’égalité de Thalès avec les lettres&nbsp;; ③ remplacer par les nombres et conclure par produit en croix.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q2</span><span>Trapèze <var>ABCD</var> de bases (<var>AB</var>) ∥ (<var>CD</var>), <var>M</var> ∈ (<var>AD</var>), <var>N</var> ∈ (<var>BC</var>), (<var>MN</var>) ∥ (<var>AB</var>). Écris l’égalité.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AD</var></span></span> = <span class="fr"><span class="fn"><var>BN</var></span><span class="fd"><var>BC</var></span></span> (énoncé du programme pour le cas du trapèze).</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q3</span><span>Que signifie «&nbsp;points alignés dans le même ordre&nbsp;»&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Qu’on les rencontre dans le même ordre sur chaque droite&nbsp;: <var>A</var> puis <var>M</var> puis <var>B</var>, comme <var>A</var> puis <var>N</var> puis <var>C</var>.</p></div></div></div>
-        <div class="q"><div class="q-head"><span class="qn">Q4</span><span>Quel théorème permet de partager un segment dans un rapport donné&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">Le théorème de <strong>Thalès</strong>&nbsp;: on construit une demi-droite graduée puis des parallèles, ce qui permet aussi de placer un point d’abscisse connue sur une droite graduée.</p></div></div></div>
-      </div>
-      <button type="button" class="taff">Tout afficher</button>
-      <p class="qobj">Objectif : 4/4</p>
-      <div class="sheet-foot"><span>Théorème de Thalès · 3ᵉ</span><span>Fiche 05 · Mini-quiz</span></div>
-    </article>
   </div>
 </section>
 
-<!-- ═══════════════ ÉPILOGUE ═══════════════ -->
-<footer class="epilogue reveal">
-  <p class="ep-kicker">Épilogue</p>
-  <h2 class="ep-title">Objectif <span>20 / 20</span></h2>
-  <div class="stars" id="stars" aria-label="Progression"><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i></div>
-  <p class="ep-score">Réponses révélées&nbsp;: <b><span id="epScore">0</span> / 20</b> · Barème conseillé&nbsp;: 1 point par question.</p>
-  <p class="ep-tips">Un quiz raté&nbsp;? Revoir la section «&nbsp;Je retiens&nbsp;» de la fiche correspondante…<br>…puis refaire le quiz le lendemain. La répétition espacée fait tout.</p>
-  <button type="button" id="restart">↺ Recommencer les fiches</button>
-  <p class="credit">D’après les Mini-Fiches de Découverte de Mouhamadou Lamine WADE · Niveau 3ᵉ · Mathématiques — Activités géométriques · Programme 2006</p>
-</footer>
+<section class="page" id="p20">
+  <div class="card paper piege">
+    <div class="accent a3"></div>
+    <div class="ci">
+      <span class="stamp">PIÈGE&nbsp;!</span>
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 05</span><span class="beat b3">⚠ PIÈGE</span></div>
+        <h2>Le piège classique</h2>
+      </header>
+      <div class="c-body">
+        <div class="pblocks">
+          <div class="pb pb-f"><span class="tag">✗ FAUX — démarrer avec les nombres</span><p>«&nbsp;<span class="fr"><span class="fn">3</span><span class="fd">5</span></span> = <span class="fr"><span class="fn"><var>AN</var></span><span class="fd">7,5</span></span> donc…&nbsp;» sans citer le théorème&nbsp;: la démonstration ne vaut rien.</p></div>
+          <div class="pb pb-v"><span class="tag">✓ VRAI — trois temps, toujours</span><p>① Conditions · ② «&nbsp;D’après Thalès&nbsp;» + égalité en lettres · ③ remplacement et produit en croix.</p></div>
+        </div>
+        <p class="keep"><b>BONUS BARÈME&nbsp;·</b> Ces trois temps rapportent des points même si le calcul final contient une erreur.</p>
+      </div>
+      <footer class="c-foot"><span>Thalès &amp; réciproque · 3ᵉ</span><span>20 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
-</main>
-</div>
+<section class="page" id="p21">
+  <div class="card paper">
+    <div class="accent a4"></div>
+    <div class="ci" data-fiche="5">
+      <header class="c-head">
+        <div class="c-top"><span class="fnum">FICHE 05</span><span class="beat b4">MINI-QUIZ 5</span></div>
+        <h2>Rédaction &amp; applications · 4 questions</h2>
+      </header>
+      <div class="c-body">
+        <div class="qgrid">
+          <div class="q"><div class="q-head"><span class="qn">Q1</span><span>Cite les trois temps d’une rédaction de Thalès.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">① Conditions (alignement + parallélisme)&nbsp;; ② égalité en lettres&nbsp;; ③ nombres + produit en croix.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q2</span><span>Trapèze, (<var>MN</var>) ∥ (<var>AB</var>)&nbsp;: écris l’égalité.</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><span class="fr"><span class="fn"><var>AM</var></span><span class="fd"><var>AD</var></span></span> = <span class="fr"><span class="fn"><var>BN</var></span><span class="fd"><var>BC</var></span></span>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q3</span><span>Que signifie «&nbsp;alignés dans le même ordre&nbsp;»&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in">On les rencontre dans le même ordre&nbsp;: <var>A</var> puis <var>M</var> puis <var>B</var>, comme <var>A</var> puis <var>N</var> puis <var>C</var>.</p></div></div></div>
+          <div class="q"><div class="q-head"><span class="qn">Q4</span><span>Quel théorème pour partager un segment dans un rapport donné&nbsp;?</span></div><button type="button" class="qbtn" aria-expanded="false">Voir la réponse</button><div class="qa"><div><p class="qa-in"><strong>Thalès</strong>&nbsp;: demi-droite graduée + parallèles (permet aussi de placer un point d’abscisse connue).</p></div></div></div>
+        </div>
+      </div>
+      <footer class="c-foot"><span>Objectif : 4/4</span><span class="fs">★ <b id="fs5">0</b>/4</span><span>21 / 22</span></footer>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PAGE 22 · ÉPILOGUE ══════════ -->
+<section class="page" id="p22">
+  <div class="card dark epi">
+    <div class="ci">
+      <p class="ep-kicker">Épilogue</p>
+      <h2 class="ep-title">Objectif <span>20 / 20</span></h2>
+      <div class="stars" id="stars" aria-label="Progression"><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i></div>
+      <p class="ep-score">Réponses révélées&nbsp;: <b><span id="epScore">0</span> / 20</b><br>Barème conseillé&nbsp;: 1 point par question.</p>
+      <p class="ep-tips">Un quiz raté&nbsp;? Revoir la carte «&nbsp;Je retiens&nbsp;» de la fiche… puis refaire le quiz le lendemain. La répétition espacée fait tout.</p>
+      <button type="button" id="restart">↺ Recommencer les fiches</button>
+      <p class="credit">D’après les Mini-Fiches de Découverte de Mouhamadou Lamine WADE · 3ᵉ · Programme 2006</p>
+      <footer class="c-foot" style="width:100%"><span>Thalès &amp; réciproque · 3ᵉ</span><span>22 / 22</span></footer>
+    </div>
+  </div>
+</section>
 
 <script>
 (function(){
-  document.documentElement.classList.add('js');
-  var bar = document.getElementById('bar');
-  var chip = document.getElementById('scoreChip');
-  var chipScore = document.getElementById('chipScore');
+  var total = 0;
+  var fiches = [1,2,3,4,5].map(function(i){
+    return { el: document.getElementById('fs'+i), n: 0 };
+  });
   var epScore = document.getElementById('epScore');
   var stars = Array.prototype.slice.call(document.querySelectorAll('#stars i'));
-  var score = 0;
 
   function render(){
-    chipScore.textContent = score;
-    epScore.textContent = score;
-    chip.classList.remove('pop'); void chip.offsetWidth; chip.classList.add('pop');
-    var on = Math.round(score / 4);
-    stars.forEach(function(s, i){ s.classList.toggle('on', i < on); });
+    fiches.forEach(function(f){ if(f.el) f.el.textContent = f.n; });
+    epScore.textContent = total;
+    var on = Math.round(total/4);
+    stars.forEach(function(s,i){ s.classList.toggle('on', i < on); });
   }
 
-  /* Quiz : afficher / masquer chaque réponse */
+  /* Quiz en accordéon : une seule réponse ouverte par carte → la page 9:16 ne déborde jamais */
   document.querySelectorAll('.qbtn').forEach(function(b){
     b.addEventListener('click', function(){
       var q = b.closest('.q');
+      var card = b.closest('.ci');
       var willOpen = !q.classList.contains('open');
-      q.classList.toggle('open', willOpen);
-      b.setAttribute('aria-expanded', String(willOpen));
-      b.textContent = willOpen ? 'Masquer la réponse' : 'Voir la réponse';
-      if(willOpen && !q.dataset.done){
-        q.dataset.done = '1';
-        q.classList.add('done');
-        score++; render();
-      }
-    });
-  });
-
-  /* Boutons « Tout afficher » par quiz */
-  document.querySelectorAll('.taff').forEach(function(t){
-    t.addEventListener('click', function(){
-      var qs = Array.prototype.slice.call(t.closest('.quizsheet').querySelectorAll('.q'));
-      var target = !qs.every(function(q){ return q.classList.contains('open'); });
-      qs.forEach(function(q){
-        if(q.classList.contains('open') !== target) q.querySelector('.qbtn').click();
+      card.querySelectorAll('.q.open').forEach(function(o){
+        o.classList.remove('open');
+        var ob = o.querySelector('.qbtn');
+        ob.textContent = 'Voir la réponse';
+        ob.setAttribute('aria-expanded','false');
       });
-      t.textContent = target ? 'Tout masquer' : 'Tout afficher';
+      if(willOpen){
+        q.classList.add('open');
+        b.textContent = 'Masquer';
+        b.setAttribute('aria-expanded','true');
+        if(!q.dataset.done){
+          q.dataset.done = '1';
+          q.classList.add('done');
+          total++;
+          var fi = parseInt(card.dataset.fiche, 10);
+          if(fi >= 1 && fi <= 5) fiches[fi-1].n++;
+          render();
+        }
+      }
     });
   });
 
   /* Recommencer */
   document.getElementById('restart').addEventListener('click', function(){
-    document.querySelectorAll('.q.open').forEach(function(q){
-      q.classList.remove('open','done'); delete q.dataset.done;
+    document.querySelectorAll('.q').forEach(function(q){
+      q.classList.remove('open','done');
+      delete q.dataset.done;
       var b = q.querySelector('.qbtn');
-      b.textContent = 'Voir la réponse'; b.setAttribute('aria-expanded','false');
+      if(b){ b.textContent = 'Voir la réponse'; b.setAttribute('aria-expanded','false'); }
     });
-    document.querySelectorAll('.taff').forEach(function(t){ t.textContent = 'Tout afficher'; });
-    score = 0; render();
+    total = 0;
+    fiches.forEach(function(f){ f.n = 0; });
+    render();
     window.scrollTo({top:0, behavior:'smooth'});
   });
 
-  /* Apparition au scroll */
-  var ro = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); }
-    });
-  }, {threshold:.12});
-  document.querySelectorAll('.reveal').forEach(function(el){ ro.observe(el); });
+  /* Navigation clavier (aperçu desktop) : ↑ ↓ page par page */
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  function current(){
+    return Math.round(window.scrollY / window.innerHeight);
+  }
+  addEventListener('keydown', function(e){
+    if(e.key === 'ArrowDown' || e.key === 'PageDown'){ e.preventDefault(); go(1); }
+    else if(e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); go(-1); }
+  });
+  function go(d){
+    var i = Math.min(pages.length-1, Math.max(0, current()+d));
+    pages[i].scrollIntoView({behavior:'smooth'});
+  }
 
-  /* Rail : fiche active */
-  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
-  var so = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        links.forEach(function(l){ l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id); });
-      }
+  /* Sommaire de la couverture : saut direct à la fiche */
+  document.querySelectorAll('.cov-toc a').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var t = document.querySelector(a.getAttribute('href'));
+      if(t) t.scrollIntoView({behavior:'smooth'});
     });
-  }, {rootMargin:'-40% 0px -55% 0px'});
-  document.querySelectorAll('section.fiche').forEach(function(s){ so.observe(s); });
+  });
 
-  /* Barre de progression */
-  window.addEventListener('scroll', function(){
-    var h = document.documentElement;
-    var max = h.scrollHeight - h.clientHeight;
-    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
-  }, {passive:true});
+  render();
 })();
 </script>
 </body>
